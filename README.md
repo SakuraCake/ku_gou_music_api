@@ -28,7 +28,9 @@
 
 ### 安装
 
-```yaml
+暂未上传至PUB.DEVQWQ，请自行下载和使用
+
+<!-- ```yaml
 dependencies:
   kugou_api: ^0.0.1
 ```
@@ -37,7 +39,7 @@ dependencies:
 
 ```shell
 dart pub add kugou_api
-```
+``` -->
 
 ### 使用接口为概念版
 
@@ -411,4 +413,4 @@ POST 请求签名会自动将请求体（JSON 编码）纳入签名计算。
 
 ## License
 
-[The MIT License (MIT)](LICENSE)
+[BSD 3-Clause "New" or "Revised" License)](LICENSE)
