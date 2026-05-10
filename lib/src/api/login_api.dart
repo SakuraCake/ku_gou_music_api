@@ -5,7 +5,10 @@ import '../client/http_client.dart';
 import '../config/constants.dart';
 import '../crypto/aes.dart';
 import '../crypto/rsa.dart';
+import '../crypto/signature.dart';
+import '../exception.dart';
 import '../models/user.dart';
+import '../util/random.dart';
 
 /// 登录相关接口
 class LoginApi extends BaseApi {
@@ -24,110 +27,56 @@ class LoginApi extends BaseApi {
   /// 获取登录用户 ID，优先使用本地缓存的用户 ID
   int? get userid => _userid ?? client.httpClient.userid;
 
-  /// 密码登录，[username] 为用户名，[password] 为密码
+  /// 密码登录（已禁用，不可用）
+  ///
+  /// 该方法已禁用，调用将抛出 [UnsupportedError] 异常。
+  /// 请使用二维码登录或直接设置 Token。
+  @Deprecated('密码登录不可用，请使用二维码登录或直接设置 Token')
   Future<LoginResult> byPassword({
     required String username,
     required String password,
   }) async {
-    final dateNow = DateTime.now().millisecondsSinceEpoch;
-    final encrypt = cryptoAesEncrypt({
-      'pwd': password,
-      'code': '',
-      'clienttime_ms': dateNow,
-    });
-    final pk = cryptoRSAEncrypt(
-      jsonEncode({'clienttime_ms': dateNow, 'key': encrypt['key']}),
-      publicKey: client.httpClient.config.rsaPublicKey,
-    ).toUpperCase();
-    return client.post<LoginResult>(
-      '/v9/login_by_pwd',
-      body: {
-        'plat': 1,
-        'support_multi': 1,
-        'clienttime_ms': dateNow,
-        't1': '562a6f12a6e803453647d16a08f5f0c2ff7eee692cba2ab74cc4c8ab47fc467561a7c6b586ce7dc46a63613b246737c03a1dc8f8d162d8ce1d2c71893d19f1d4b797685a4c6d3d81341cbde65e488c4829a9b4d42ef2df470eb102979fa5adcdd9b4eecfea8b909ff7599abeb49867640f10c3c70fc444effca9d15db44a9a6c907731e2bb0f22cd9b3536380169995693e5f0e2424e3378097d3813186e3fe96bbe7023808a0981b4e2b6135a76faac',
-        't2': '31c4daf4cf480169ccea1cb7d4a209295865a9d2b788510301694db229b87807469ea0d41b4d4b9173c2151da7294aeebfc9738df154bbdf11a4e117bb5dff6a3af8ce5ce333e681c1f29a44038f27567d58992eb81283e080778ac77db1400fdf49b7cf7e26be2e5af4da7830cc3be4',
-        't3': 'MCwwLDAsMCwwLDAsMCwwLDA=',
-        'username': username,
-        'params': encrypt['str'],
-        'pk': pk,
-      },
-      router: 'login.user.kugou.com',
-      encryptType: EncryptType.android,
-      fromJson: (json) {
-        if (json['secu_params'] != null) {
-          final decrypted = cryptoAesDecrypt(
-            json['secu_params'] as String,
-            encrypt['key']!,
-          );
-          if (decrypted is Map) {
-            json.addAll(Map<String, dynamic>.from(decrypted));
-          } else {
-            json['token'] = decrypted.toString();
-          }
-        }
-        final result = LoginResult.fromJson(json);
-        if (result.token != null) {
-          _token = result.token;
-          _userid = result.userId;
-          client.httpClient.token = result.token;
-          client.httpClient.userid = result.userId;
-        }
-        return result;
-      },
-    );
+    throw UnsupportedError('密码登录不可用，请使用二维码登录或直接设置 Token');
   }
 
-  /// 发送验证码，[phone] 为手机号码
+  /// 发送验证码（已禁用，不可用）
+  ///
+  /// 该方法已禁用，调用将抛出 [UnsupportedError] 异常。
+  /// 请使用二维码登录或直接设置 Token。
+  @Deprecated('验证码登录不可用，请使用二维码登录或直接设置 Token')
   Future<bool> sendCaptcha({required String phone}) async {
-    return client.post<bool>(
-      '/v1/login/captcha',
-      body: {'phone': phone, 'appid': client.httpClient.config.appid},
-      router: 'loginuser.kugou.com',
-      encryptType: EncryptType.android,
-      fromJson: (json) => json['status'] == 1,
-    );
+    throw UnsupportedError('验证码登录不可用，请使用二维码登录或直接设置 Token');
   }
 
-  /// 验证码登录，[phone] 为手机号码，[captcha] 为验证码
+  /// 验证码登录（已禁用，不可用）
+  ///
+  /// 该方法已禁用，调用将抛出 [UnsupportedError] 异常。
+  /// 请使用二维码登录或直接设置 Token。
+  @Deprecated('验证码登录不可用，请使用二维码登录或直接设置 Token')
   Future<LoginResult> byCaptcha({
     required String phone,
     required String captcha,
   }) async {
-    return client.post<LoginResult>(
-      '/v1/login/by_captcha',
-      body: {
-        'phone': phone,
-        'captcha': captcha,
-        'appid': client.httpClient.config.appid,
-      },
-      router: 'loginuser.kugou.com',
-      encryptType: EncryptType.android,
-      fromJson: (json) {
-        final result = LoginResult.fromJson(json);
-        if (result.token != null) {
-          _token = result.token;
-          _userid = result.userId;
-          client.httpClient.token = result.token;
-          client.httpClient.userid = result.userId;
-        }
-        return result;
-      },
-    );
+    throw UnsupportedError('验证码登录不可用，请使用二维码登录或直接设置 Token');
   }
 
   /// 二维码登录状态流，[interval] 为轮询间隔，自动获取二维码并持续检查扫码状态
+  ///
+  /// 首次 yield 会返回 [QrCodeState.waiting] 并附带 [QrCodeInfo] 中的二维码图片，
+  /// 可通过 [qrInfo] 获取二维码信息（含 base64 图片）。
   Stream<QrCodeState> qrCodeStream({
     Duration interval = const Duration(seconds: 3),
   }) async* {
-    final qrInfo = await _getQrCode();
-    if (qrInfo == null) {
+    _qrInfo = await _getQrCode();
+    if (_qrInfo == null) {
       yield QrCodeState.error;
       return;
     }
 
+    yield QrCodeState.waiting;
+
     while (true) {
-      final state = await _checkQrCodeState(qrInfo);
+      final state = await _checkQrCodeState(_qrInfo!);
       yield state;
       if (state == QrCodeState.confirmed ||
           state == QrCodeState.error ||
@@ -138,6 +87,12 @@ class LoginApi extends BaseApi {
     }
   }
 
+  /// 最近一次二维码信息，二维码登录前为 null
+  QrCodeInfo? _qrInfo;
+
+  /// 获取当前二维码信息
+  QrCodeInfo? get qrInfo => _qrInfo;
+
   Future<QrCodeInfo?> _getQrCode() async {
     try {
       final result = await client.get<Map<String, dynamic>>(
@@ -146,6 +101,7 @@ class LoginApi extends BaseApi {
           'appid': 1001,
           'type': 1,
           'plat': 4,
+          'qrimg': 1,
           'qrcode_txt':
               'https://h5.kugou.com/apps/loginQRCode/html/index.html?appid=${client.httpClient.config.appid}&',
           'srcappid': kSrcAppid,
@@ -158,6 +114,7 @@ class LoginApi extends BaseApi {
         return QrCodeInfo(
           qrCode: data['qrcode'] as String?,
           qrUrl: data['qrcode_txt'] as String?,
+          qrImg: data['qrcode_img'] as String?,
           expire: (data['expire_time'] as num?)?.toInt(),
         );
       }

@@ -33,3 +33,6 @@ migrate_working_dir/
 /build/
 /coverage/
 KuGouMusicApi/
+
+# Integration test with real credentials
+test/full_integration_test.dart

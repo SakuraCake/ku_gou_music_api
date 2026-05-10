@@ -29,6 +29,14 @@
 /// `FmApi.personal`、`SceneApi.listsV2`、`MiscApi.brush`。
 ///
 /// CookieJar 不内置文件持久化，需用户自行保存 `serialize()` 的输出。
+///
+/// ## 登录方式
+///
+/// 支持三种登录方式：
+/// - **密码登录** [LoginApi.byPassword]：使用用户名和密码
+/// - **验证码登录** [LoginApi.byCaptcha]：先调用 [LoginApi.sendCaptcha] 发送验证码
+/// - **二维码登录** [LoginApi.qrCodeStream]：返回状态流，可通过 [LoginApi.qrInfo]
+///   获取二维码图片（含 base64 编码的 PNG 图片）
 library;
 
 export 'src/client/kugou_api.dart';

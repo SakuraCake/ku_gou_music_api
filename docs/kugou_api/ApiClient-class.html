@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the ApiClient class from the kugou_api library, for the Dart programming language.">
+  <title>ApiClient class - kugou_api library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">kugou_api</a></li>
+    <li><a href="../kugou_api/">kugou_api.dart</a></li>
+    <li class="self-crumb">ApiClient class</li>
+  </ol>
+  <div class="self-name">ApiClient</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="kugou_api&#47;kugou_api-library-sidebar.html"
+    data-below-sidebar="kugou_api&#47;ApiClient-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">ApiClient</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>API 客户端，封装 HTTP 请求、日志记录、缓存和重试逻辑。</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="ApiClient.new" class="callable">
+          <span class="name"><a href="../kugou_api/ApiClient/ApiClient.html">ApiClient</a></span><span class="signature">({<span class="parameter" id="-param-httpClient"><span>required</span> <span class="type-annotation"><a href="../kugou_api/KuGouHttpClient-class.html">KuGouHttpClient</a></span> <span class="parameter-name">httpClient</span>, </span><span class="parameter" id="-param-logger"><span class="type-annotation"><a href="../kugou_api/Logger-class.html">Logger</a>?</span> <span class="parameter-name">logger</span>, </span><span class="parameter" id="-param-cache"><span class="type-annotation"><a href="../kugou_api/MemoryCache-class.html">MemoryCache</a>?</span> <span class="parameter-name">cache</span>, </span><span class="parameter" id="-param-retryOptions"><span class="type-annotation"><a href="../kugou_api/RetryOptions-class.html">RetryOptions</a></span> <span class="parameter-name">retryOptions</span> = <span class="default-value">const RetryOptions()</span>, </span><span class="parameter" id="-param-cacheTtl"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Duration-class.html">Duration</a>?</span> <span class="parameter-name">cacheTtl</span></span>})</span>
+        </dt>
+        <dd>
+          创建 <a href="../kugou_api/ApiClient-class.html">ApiClient</a> 实例。
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="cache" class="property">
+  <span class="name"><a href="../kugou_api/ApiClient/cache.html">cache</a></span>
+  <span class="signature">&#8594; <a href="../kugou_api/MemoryCache-class.html">MemoryCache</a></span>
+  
+
+</dt>
+<dd>
+  内存缓存实例。
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cacheTtl" class="property">
+  <span class="name"><a href="../kugou_api/ApiClient/cacheTtl.html">cacheTtl</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/Duration-class.html">Duration</a>?</span>
+  
+
+</dt>
+<dd>
+  缓存过期时间，为 null 时不使用缓存。
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="httpClient" class="property">
+  <span class="name"><a href="../kugou_api/ApiClient/httpClient.html">httpClient</a></span>
+  <span class="signature">&#8594; <a href="../kugou_api/KuGouHttpClient-class.html">KuGouHttpClient</a></span>
+  
+
+</dt>
+<dd>
+  HTTP 客户端实例。
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="logger" class="property">
+  <span class="name"><a href="../kugou_api/ApiClient/logger.html">logger</a></span>
+  <span class="signature">&#8594; <a href="../kugou_api/Logger-class.html">Logger</a></span>
+  
+
+</dt>
+<dd>
+  日志记录器。
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="retryOptions" class="property">
+  <span class="name"><a href="../kugou_api/ApiClient/retryOptions.html">retryOptions</a></span>
+  <span class="signature">&#8594; <a href="../kugou_api/RetryOptions-class.html">RetryOptions</a></span>
+  
+
+</dt>
+<dd>
+  重试配置。
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="get" class="callable">
+  <span class="name"><a href="../kugou_api/ApiClient/get.html">get</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="get-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span><span class="parameter" id="get-param-params"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">params</span>, </span><span class="parameter" id="get-param-headers"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">headers</span>, </span><span class="parameter" id="get-param-router"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">router</span>, </span><span class="parameter" id="get-param-encryptType"><span class="type-annotation"><a href="../kugou_api/EncryptType.html">EncryptType</a></span> <span class="parameter-name">encryptType</span> = <span class="default-value">EncryptType.android</span>, </span><span class="parameter" id="get-param-encryptKey"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">encryptKey</span> = <span class="default-value">false</span>, </span><span class="parameter" id="get-param-notSignature"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">notSignature</span> = <span class="default-value">false</span>, </span><span class="parameter" id="get-param-clearDefaultParams"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearDefaultParams</span> = <span class="default-value">false</span>, </span><span class="parameter" id="get-param-baseURL"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">baseURL</span>, </span><span class="parameter" id="get-param-fromJson"><span class="type-annotation">T</span> <span class="parameter-name">fromJson</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span></span>)?, </span><span class="parameter" id="get-param-useCache"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">useCache</span> = <span class="default-value">false</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  发送 GET 请求并返回解析后的数据。
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="post" class="callable">
+  <span class="name"><a href="../kugou_api/ApiClient/post.html">post</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="post-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span><span class="parameter" id="post-param-params"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">params</span>, </span><span class="parameter" id="post-param-body"><span class="type-annotation">dynamic</span> <span class="parameter-name">body</span>, </span><span class="parameter" id="post-param-headers"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">headers</span>, </span><span class="parameter" id="post-param-router"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">router</span>, </span><span class="parameter" id="post-param-encryptType"><span class="type-annotation"><a href="../kugou_api/EncryptType.html">EncryptType</a></span> <span class="parameter-name">encryptType</span> = <span class="default-value">EncryptType.android</span>, </span><span class="parameter" id="post-param-encryptKey"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">encryptKey</span> = <span class="default-value">false</span>, </span><span class="parameter" id="post-param-notSignature"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">notSignature</span> = <span class="default-value">false</span>, </span><span class="parameter" id="post-param-clearDefaultParams"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearDefaultParams</span> = <span class="default-value">false</span>, </span><span class="parameter" id="post-param-baseURL"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">baseURL</span>, </span><span class="parameter" id="post-param-fromJson"><span class="type-annotation">T</span> <span class="parameter-name">fromJson</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  发送 POST 请求并返回解析后的数据。
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.11.4/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">kugou_api</a></li>
+    <li><a href="../kugou_api/">kugou_api</a></li>
+    <li class="self-crumb">ApiClient class</li>
+</ol>
+
+    <h5>kugou_api library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    kugou_api
+      0.0.1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

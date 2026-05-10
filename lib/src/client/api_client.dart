@@ -188,8 +188,12 @@ class ApiClient {
       throw KuGouApiException(
         status: status is int ? status : int.tryParse(status.toString()),
         code: code,
-        message: result['error']?.toString() ?? result['errmsg']?.toString() ?? result['message']?.toString(),
-        data: result['data'],
+        message: result['error']?.toString() ??
+            result['errmsg']?.toString() ??
+            result['error_msg']?.toString() ??
+            result['msg']?.toString() ??
+            result['message']?.toString(),
+        data: result,
       );
     }
   }

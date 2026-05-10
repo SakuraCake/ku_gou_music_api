@@ -43,160 +43,40 @@ void main() {
       httpClient.close();
     });
 
-    test('byPassword 登录成功并保存 token', () async {
-      final mockClient = MockHttpClient((request) async {
-        expect(request.method, equals('POST'));
-        expect(request.headers['x-router'], equals('login.user.kugou.com'));
-        return _jsonResponse({
-          'status': 1,
-          'data': {
-            'userId': 12345,
-            'token': 'test_token_pwd',
-            'userName': 'testuser',
-            'vipType': 0,
-            'success': true,
-          },
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
+    test('byPassword 已禁用，调用抛出异常', () async {
+      httpClient = KuGouHttpClient(config: config);
       apiClient = ApiClient(httpClient: httpClient);
       final loginApi = LoginApi(apiClient);
 
-      final result = await loginApi.byPassword(
-        username: '13800138000',
-        password: 'test_password',
+      expect(
+        () => loginApi.byPassword(
+          username: '13800138000',
+          password: 'test_password',
+        ),
+        throwsA(isA<UnsupportedError>()),
       );
-
-      expect(result.token, equals('test_token_pwd'));
-      expect(result.userId, equals(12345));
-      expect(result.success, isTrue);
-      expect(loginApi.token, equals('test_token_pwd'));
-      expect(loginApi.userid, equals(12345));
-      expect(httpClient.token, equals('test_token_pwd'));
-      expect(httpClient.userid, equals(12345));
     });
 
-    test('byPassword 登录失败不保存 token', () async {
-      final mockClient = MockHttpClient((request) async {
-        return _jsonResponse({
-          'status': 1,
-          'data': {
-            'userId': null,
-            'token': null,
-            'success': false,
-            'message': '密码错误',
-          },
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
+    test('sendCaptcha 已禁用，调用抛出异常', () async {
+      httpClient = KuGouHttpClient(config: config);
       apiClient = ApiClient(httpClient: httpClient);
       final loginApi = LoginApi(apiClient);
 
-      final result = await loginApi.byPassword(
-        username: '13800138000',
-        password: 'wrong_password',
+      expect(
+        () => loginApi.sendCaptcha(phone: '13800138000'),
+        throwsA(isA<UnsupportedError>()),
       );
-
-      expect(result.token, isNull);
-      expect(result.success, isFalse);
-      expect(loginApi.token, isNull);
-      expect(loginApi.userid, isNull);
     });
 
-    test('sendCaptcha 发送验证码成功', () async {
-      final mockClient = MockHttpClient((request) async {
-        expect(request.method, equals('POST'));
-        expect(request.headers['x-router'], equals('loginuser.kugou.com'));
-        return _jsonResponse({
-          'status': 1,
-          'data': {'status': 1},
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
+    test('byCaptcha 已禁用，调用抛出异常', () async {
+      httpClient = KuGouHttpClient(config: config);
       apiClient = ApiClient(httpClient: httpClient);
       final loginApi = LoginApi(apiClient);
 
-      final result = await loginApi.sendCaptcha(phone: '13800138000');
-      expect(result, isTrue);
-    });
-
-    test('sendCaptcha 发送验证码失败', () async {
-      final mockClient = MockHttpClient((request) async {
-        return _jsonResponse({
-          'status': 1,
-          'data': {'status': 0},
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi = LoginApi(apiClient);
-
-      final result = await loginApi.sendCaptcha(phone: '13800138000');
-      expect(result, isFalse);
-    });
-
-    test('byCaptcha 登录成功并保存 token', () async {
-      final mockClient = MockHttpClient((request) async {
-        expect(request.method, equals('POST'));
-        expect(request.headers['x-router'], equals('loginuser.kugou.com'));
-        return _jsonResponse({
-          'status': 1,
-          'data': {
-            'userId': 67890,
-            'token': 'test_token_captcha',
-            'userName': 'captcha_user',
-            'vipType': 1,
-            'success': true,
-          },
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi = LoginApi(apiClient);
-
-      final result = await loginApi.byCaptcha(
-        phone: '13800138000',
-        captcha: '123456',
+      expect(
+        () => loginApi.byCaptcha(phone: '13800138000', captcha: '123456'),
+        throwsA(isA<UnsupportedError>()),
       );
-
-      expect(result.token, equals('test_token_captcha'));
-      expect(result.userId, equals(67890));
-      expect(loginApi.token, equals('test_token_captcha'));
-      expect(loginApi.userid, equals(67890));
-      expect(httpClient.token, equals('test_token_captcha'));
-      expect(httpClient.userid, equals(67890));
-    });
-
-    test('byCaptcha 登录失败不保存 token', () async {
-      final mockClient = MockHttpClient((request) async {
-        return _jsonResponse({
-          'status': 1,
-          'data': {
-            'userId': null,
-            'token': null,
-            'success': false,
-            'message': '验证码错误',
-          },
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi = LoginApi(apiClient);
-
-      final result = await loginApi.byCaptcha(
-        phone: '13800138000',
-        captcha: '000000',
-      );
-
-      expect(result.token, isNull);
-      expect(result.success, isFalse);
-      expect(loginApi.token, isNull);
     });
 
     test('qrCodeStream 获取二维码失败返回 error', () async {
@@ -242,6 +122,7 @@ void main() {
           .toList();
 
       expect(states, contains(QrCodeState.confirmed));
+      expect(states.first, equals(QrCodeState.waiting));
       expect(loginApi.token, equals('qr_token'));
       expect(loginApi.userid, equals(99999));
       expect(httpClient.token, equals('qr_token'));
@@ -283,9 +164,10 @@ void main() {
           .qrCodeStream(interval: const Duration(milliseconds: 10))
           .toList();
 
-      expect(states.length, equals(2));
+      expect(states.length, equals(3));
       expect(states[0], equals(QrCodeState.waiting));
-      expect(states[1], equals(QrCodeState.expired));
+      expect(states[1], equals(QrCodeState.waiting));
+      expect(states[2], equals(QrCodeState.expired));
     });
 
     test('qrCodeStream 已扫码状态', () async {
@@ -323,75 +205,9 @@ void main() {
           .qrCodeStream(interval: const Duration(milliseconds: 10))
           .toList();
 
-      expect(states[0], equals(QrCodeState.scanned));
-      expect(states[1], equals(QrCodeState.confirmed));
-    });
-
-    test('token 优先使用 LoginApi 实例的 token', () async {
-      final mockClient = MockHttpClient((request) async {
-        return _jsonResponse({'status': 1, 'data': {}});
-      });
-
-      httpClient = KuGouHttpClient(
-        config: config,
-        token: 'http_token',
-        userid: 100,
-        innerClient: mockClient,
-      );
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi = LoginApi(apiClient);
-
-      expect(loginApi.token, equals('http_token'));
-      expect(loginApi.userid, equals(100));
-
-      final mockClient2 = MockHttpClient((request) async {
-        return _jsonResponse({
-          'status': 1,
-          'data': {'userId': 200, 'token': 'api_token', 'success': true},
-        });
-      });
-
-      httpClient.close();
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient2);
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi2 = LoginApi(apiClient);
-
-      await loginApi2.byPassword(username: '13800138000', password: 'test');
-
-      expect(loginApi2.token, equals('api_token'));
-      expect(loginApi2.userid, equals(200));
-    });
-
-    test('byPassword 密码经过 AES 加密', () async {
-      String? capturedBody;
-
-      final mockClient = MockHttpClient((request) async {
-        capturedBody = await request.finalize().bytesToString();
-        return _jsonResponse({
-          'status': 1,
-          'data': {'userId': 1, 'token': 'encrypted_token', 'success': true},
-        });
-      });
-
-      httpClient = KuGouHttpClient(config: config, innerClient: mockClient);
-      apiClient = ApiClient(httpClient: httpClient);
-      final loginApi = LoginApi(apiClient);
-
-      await loginApi.byPassword(
-        username: '13800138000',
-        password: 'plain_password',
-      );
-
-      expect(capturedBody, isNotNull);
-      final body = jsonDecode(capturedBody!) as Map<String, dynamic>;
-      expect(body['username'], equals('13800138000'));
-      expect(body['params'], isNot(equals('plain_password')));
-      expect(body['pk'], isNotNull);
-      expect(body['t1'], isNotNull);
-      expect(body['t2'], isNotNull);
-      expect(body['t3'], equals('MCwwLDAsMCwwLDAsMCwwLDA='));
-      expect(body['plat'], equals(1));
-      expect(body['support_multi'], equals(1));
+      expect(states[0], equals(QrCodeState.waiting));
+      expect(states[1], equals(QrCodeState.scanned));
+      expect(states[2], equals(QrCodeState.confirmed));
     });
 
     test('qrCodeStream 使用正确的 baseURL 和 encryptType', () async {
@@ -423,26 +239,14 @@ void main() {
           .qrCodeStream(interval: const Duration(milliseconds: 10))
           .toList();
 
-      expect(
-        capturedRequest.url.toString(),
-        contains('login-user.kugou.com'),
-      );
+      expect(capturedRequest.url.toString(), contains('login-user.kugou.com'));
       expect(
         capturedRequest.url.toString(),
         contains('/v2/get_userinfo_qrcode'),
       );
-      expect(
-        capturedRequest.url.toString(),
-        contains('qrcode=test_qr_code'),
-      );
-      expect(
-        capturedRequest.url.toString(),
-        contains('plat=4'),
-      );
-      expect(
-        capturedRequest.url.toString(),
-        contains('srcappid=2919'),
-      );
+      expect(capturedRequest.url.toString(), contains('qrcode=test_qr_code'));
+      expect(capturedRequest.url.toString(), contains('plat=4'));
+      expect(capturedRequest.url.toString(), contains('srcappid=2919'));
     });
   });
 }

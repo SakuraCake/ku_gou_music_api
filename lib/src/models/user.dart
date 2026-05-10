@@ -81,7 +81,7 @@ enum QrCodeState {
   expired,
 
   /// 错误
-  error
+  error,
 }
 
 /// 二维码信息
@@ -96,8 +96,11 @@ class QrCodeInfo {
   /// 过期时间（秒）
   final int? expire;
 
+  /// 二维码图片 base64
+  final String? qrImg;
+
   /// Creates a new [QrCodeInfo] instance.
-  QrCodeInfo({this.qrCode, this.qrUrl, this.expire});
+  QrCodeInfo({this.qrCode, this.qrUrl, this.expire, this.qrImg});
 
   /// Creates a [QrCodeInfo] from JSON data.
   factory QrCodeInfo.fromJson(Map<String, dynamic> json) =>

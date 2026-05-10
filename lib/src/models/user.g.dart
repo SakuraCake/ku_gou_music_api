@@ -46,6 +46,7 @@ QrCodeInfo _$QrCodeInfoFromJson(Map<String, dynamic> json) => QrCodeInfo(
   qrCode: json['qrCode'] as String?,
   qrUrl: json['qrUrl'] as String?,
   expire: (json['expire'] as num?)?.toInt(),
+  qrImg: json['qrImg'] as String?,
 );
 
 Map<String, dynamic> _$QrCodeInfoToJson(QrCodeInfo instance) =>
@@ -53,4 +54,5 @@ Map<String, dynamic> _$QrCodeInfoToJson(QrCodeInfo instance) =>
       'qrCode': instance.qrCode,
       'qrUrl': instance.qrUrl,
       'expire': instance.expire,
+      'qrImg': instance.qrImg,
     };
