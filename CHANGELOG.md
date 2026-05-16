@@ -1,3 +1,9 @@
+## 0.0.5
+
+- Removed old generated `docs/` from git tracking
+- Added `.pubignore` to exclude non-package files from publishing
+- All tests passing, dry-run clean
+
 ## 0.0.4
 
 - Added Chinese README (`README_CN.md`) with language switcher between English and Chinese
