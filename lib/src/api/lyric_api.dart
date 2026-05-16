@@ -17,19 +17,21 @@ class LyricApi extends BaseApi {
     String? hash,
   }) async {
     return client.get<LyricSearchResult>(
-      '/search',
+      '/v1/search',
       params: {
-        'ver': 1,
-        'man': 'yes',
-        'client': 'mobi',
+        'appid': client.httpClient.config.appid,
+        'clientver': client.httpClient.config.clientver,
         'keyword': keyword,
-        'page': 1,
-        'pagesize': 10,
-        if (hash != null) 'hash': hash,
-        if (duration != null) 'duration': duration,
+        'hash': hash ?? '',
+        'duration': duration ?? 0,
+        'album_audio_id': 0,
+        'lrctxt': 1,
+        'man': 'no',
       },
       baseURL: 'https://lyrics.kugou.com',
       encryptType: EncryptType.android,
+      notSignature: true,
+      clearDefaultParams: true,
       fromJson: (json) => _parseLyricSearchResult(json, keyword),
     );
   }

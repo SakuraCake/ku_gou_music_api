@@ -56,3 +56,17 @@ Map<String, dynamic> _$QrCodeInfoToJson(QrCodeInfo instance) =>
       'expire': instance.expire,
       'qrImg': instance.qrImg,
     };
+
+CaptchaResult _$CaptchaResultFromJson(Map<String, dynamic> json) =>
+    CaptchaResult(
+      success: json['success'] as bool,
+      errorCode: (json['errorCode'] as num?)?.toInt(),
+      message: json['message'] as String?,
+    );
+
+Map<String, dynamic> _$CaptchaResultToJson(CaptchaResult instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'errorCode': instance.errorCode,
+      'message': instance.message,
+    };

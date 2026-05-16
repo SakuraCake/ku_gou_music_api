@@ -1,6 +1,5 @@
 import '../client/base_api.dart';
 import '../client/http_client.dart';
-import '../crypto/signature.dart';
 import '../models/album.dart';
 
 /// 专辑相关接口
@@ -10,29 +9,17 @@ class AlbumApi extends BaseApi {
 
   /// 获取专辑详情，[albumId] 为专辑 ID，多个以逗号分隔
   Future<AlbumDetailResult> detail({required String albumId}) async {
-    final dateTime = DateTime.now().millisecondsSinceEpoch;
-    final data = albumId.split(',').map((s) => {'album_id': s, 'album_name': '', 'author_name': ''}).toList();
-    final key = signParams(
-      dateTime.toString(),
-      appid: client.httpClient.config.appid,
-      clientver: client.httpClient.config.clientver,
-      isLite: client.httpClient.config.isLite,
-    );
+    final data = albumId.split(',').map((s) => {'album_id': s}).toList();
     return client.post<AlbumDetailResult>(
-      '/v1/album',
+      '/kmr/v2/albums',
       body: {
-        'appid': client.httpClient.config.appid,
-        'clienttime': dateTime,
-        'clientver': client.httpClient.config.clientver,
         'data': data,
-        'dfid': client.httpClient.dfid,
-        'fields': '',
-        'key': key,
-        'mid': client.httpClient.mid,
+        'is_buy': 0,
+        'fields': 'album_id,album_name,publish_date,sizable_cover,intro,language,is_publish,heat,type,quality,authors,exclusive,author_name,trans_param',
       },
-      baseURL: 'http://kmr.service.kugou.com',
-      router: 'kmr.service.kugou.com',
+      router: 'openapi.kugou.com',
       encryptType: EncryptType.android,
+      headers: {'kg-tid': '255'},
       fromJson: (json) {
         final data = json['data'];
         if (data is List) {

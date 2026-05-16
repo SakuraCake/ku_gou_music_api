@@ -78,12 +78,42 @@ final loginResult = await api.login.byPassword(
 );
 
 // 验证码登录
-final loginResult = await api.login.byCaptcha(phone: '13800138000', captcha: '1234');
+final result = await api.login.sendCaptcha(phone: '13800138000');
+if (result.success) {
+  final loginResult = await api.login.byCaptcha(phone: '13800138000', captcha: '1234');
+}
 
 // 二维码登录
 await for (final state in api.login.qrCodeStream()) {
   if (state == QrCodeState.confirmed) break;
 }
+```
+
+### 自动刷新登录
+
+```dart
+// 初始化已登录的 API
+final api = KuGouApi(token: 'your_token', userid: 12345);
+
+// 启用自动刷新登录（默认每24小时刷新一次）
+api.enableAutoRefresh(
+  interval: Duration(hours: 24),
+  onRefresh: (result) {
+    print('Token refreshed: ${result.token}');
+  },
+  onError: (e) {
+    print('Refresh failed: $e');
+  },
+);
+
+// 确保登录状态
+final result = await api.ensureLoggedIn();
+
+// 禁用自动刷新
+api.disableAutoRefresh();
+
+// 清理资源
+api.dispose();
 ```
 
 ### Cookie 管理

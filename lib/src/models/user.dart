@@ -107,3 +107,24 @@ class QrCodeInfo {
       _$QrCodeInfoFromJson(json);
   Map<String, dynamic> toJson() => _$QrCodeInfoToJson(this);
 }
+
+/// 验证码发送结果
+@JsonSerializable()
+class CaptchaResult {
+  /// 是否发送成功
+  final bool success;
+
+  /// 错误码
+  final int? errorCode;
+
+  /// 提示消息
+  final String? message;
+
+  /// Creates a new [CaptchaResult] instance.
+  CaptchaResult({required this.success, this.errorCode, this.message});
+
+  /// Creates a [CaptchaResult] from JSON data.
+  factory CaptchaResult.fromJson(Map<String, dynamic> json) =>
+      _$CaptchaResultFromJson(json);
+  Map<String, dynamic> toJson() => _$CaptchaResultToJson(this);
+}

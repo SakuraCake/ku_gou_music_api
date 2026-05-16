@@ -15,14 +15,18 @@ class SearchApi extends BaseApi {
     int pageSize = 30,
   }) async {
     return client.get<SearchResult>(
-      '/api/v3/search/song',
+      '/v3/search/song',
       params: {
         'keyword': keyword,
         'page': page,
         'pagesize': pageSize,
+        'albumhide': 0,
+        'iscorrection': 1,
+        'nocollect': 0,
+        'platform': 'AndroidFilter',
       },
-      baseURL: 'http://mobilecdn.kugou.com',
-      notSignature: true,
+      router: 'complexsearch.kugou.com',
+      encryptType: EncryptType.android,
       fromJson: (json) => _parseSearchResult(json, keyword),
     );
   }
@@ -34,15 +38,19 @@ class SearchApi extends BaseApi {
     int pageSize = 30,
   }) async {
     return client.get<SearchResult>(
-      '/api/v3/search/special',
+      '/v1/search/special',
       params: {
         'keyword': keyword,
         'page': page,
         'pagesize': pageSize,
+        'albumhide': 0,
+        'iscorrection': 1,
+        'nocollect': 0,
+        'platform': 'AndroidFilter',
       },
-      baseURL: 'http://mobilecdn.kugou.com',
-      notSignature: true,
-      fromJson: (json) => _parseSearchResult(json, keyword),
+      router: 'complexsearch.kugou.com',
+      encryptType: EncryptType.android,
+      fromJson: (json) => _parseSearchPlaylistResult(json, keyword),
     );
   }
 
@@ -53,15 +61,19 @@ class SearchApi extends BaseApi {
     int pageSize = 30,
   }) async {
     return client.get<SearchResult>(
-      '/api/v3/search/album',
+      '/v1/search/album',
       params: {
         'keyword': keyword,
         'page': page,
         'pagesize': pageSize,
+        'albumhide': 0,
+        'iscorrection': 1,
+        'nocollect': 0,
+        'platform': 'AndroidFilter',
       },
-      baseURL: 'http://mobilecdn.kugou.com',
-      notSignature: true,
-      fromJson: (json) => _parseSearchResult(json, keyword),
+      router: 'complexsearch.kugou.com',
+      encryptType: EncryptType.android,
+      fromJson: (json) => _parseSearchAlbumResult(json, keyword),
     );
   }
 
@@ -219,6 +231,29 @@ class SearchApi extends BaseApi {
     if (json is! Map<String, dynamic>) {
       return SearchResult(keyword: keyword);
     }
+    final lists = json['lists'];
+    if (lists is List) {
+      final songs = lists
+          .whereType<Map<String, dynamic>>()
+          .map((e) => Song(
+                name: e['OriSongName'] as String? ?? e['SongName'] as String?,
+                songName: e['OriSongName'] as String? ?? e['SongName'] as String?,
+                singer: e['SingerName'] as String?,
+                ownerName: e['SingerName'] as String?,
+                hash: e['FileHash'] as String?,
+                albumId: e['AlbumID'] is int
+                    ? e['AlbumID'] as int
+                    : int.tryParse(e['AlbumID']?.toString() ?? ''),
+                duration: e['Duration'] as int?,
+                img: e['Image'] as String?,
+              ))
+          .toList();
+      return SearchResult(
+        keyword: keyword,
+        total: json['total'] as int?,
+        songs: songs,
+      );
+    }
     final info = json['info'];
     if (info is List) {
       final songs = info
@@ -239,6 +274,78 @@ class SearchApi extends BaseApi {
         keyword: keyword,
         total: json['total'] as int?,
         songs: songs,
+      );
+    }
+    return SearchResult.fromJson(json);
+  }
+
+  SearchResult _parseSearchAlbumResult(dynamic json, String keyword) {
+    if (json is! Map<String, dynamic>) {
+      return SearchResult(keyword: keyword);
+    }
+    final lists = json['lists'];
+    if (lists is List) {
+      final albums = lists
+          .whereType<Map<String, dynamic>>()
+          .map((e) => SearchAlbum(
+                albumId: e['albumid'] is int
+                    ? e['albumid'] as int
+                    : int.tryParse(e['albumid']?.toString() ?? ''),
+                albumName: e['albumname'] as String?,
+                img: e['img'] as String?,
+                singer: e['singer'] as String?,
+              ))
+          .toList();
+      return SearchResult(
+        keyword: keyword,
+        total: json['total'] as int?,
+        albums: albums,
+      );
+    }
+    final info = json['info'];
+    if (info is List) {
+      final albums = info
+          .whereType<Map<String, dynamic>>()
+          .map((e) => SearchAlbum(
+                albumId: e['album_id'] is int
+                    ? e['album_id'] as int
+                    : int.tryParse(e['album_id']?.toString() ?? ''),
+                albumName: e['album_name'] as String?,
+                img: e['img'] as String?,
+                singer: e['singername'] as String?,
+              ))
+          .toList();
+      return SearchResult(
+        keyword: keyword,
+        total: json['total'] as int?,
+        albums: albums,
+      );
+    }
+    return SearchResult.fromJson(json);
+  }
+
+  SearchResult _parseSearchPlaylistResult(dynamic json, String keyword) {
+    if (json is! Map<String, dynamic>) {
+      return SearchResult(keyword: keyword);
+    }
+    final lists = json['lists'];
+    if (lists is List) {
+      final playlists = lists
+          .whereType<Map<String, dynamic>>()
+          .map((e) => SearchPlaylist(
+                specialId: e['specialid'] is int
+                    ? e['specialid'] as int
+                    : int.tryParse(e['specialid']?.toString() ?? ''),
+                specialName: e['specialname'] as String?,
+                img: e['img'] as String?,
+                songCount: e['song_count'] as int?,
+                author: e['nickname'] as String?,
+              ))
+          .toList();
+      return SearchResult(
+        keyword: keyword,
+        total: json['total'] as int?,
+        playlists: playlists,
       );
     }
     return SearchResult.fromJson(json);

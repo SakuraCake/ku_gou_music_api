@@ -25,12 +25,6 @@ class RecommendApi extends BaseApi {
   /// AI 推荐歌曲，[albumAudioIds] 为种子歌曲 ID，多个以逗号分隔，需要登录
   Future<RecommendSongResult> ai({String? albumAudioIds}) async {
     final clienttime = DateTime.now().millisecondsSinceEpoch;
-    final key = signParams(
-      clienttime.toString(),
-      appid: client.httpClient.config.appid,
-      clientver: client.httpClient.config.clientver,
-      isLite: client.httpClient.config.isLite,
-    );
     final recommendSource = albumAudioIds != null
         ? albumAudioIds.split(',').map((s) => {'ID': int.tryParse(s) ?? 0}).toList()
         : <Map<String, dynamic>>[];
@@ -46,7 +40,7 @@ class RecommendApi extends BaseApi {
         'playlist_ver': 2,
         'area_code': 1,
         'appid': client.httpClient.config.appid,
-        'key': key,
+        'key': signParamsKey(clienttime),
         'mid': client.httpClient.mid,
         'recommend_source': recommendSource,
       },

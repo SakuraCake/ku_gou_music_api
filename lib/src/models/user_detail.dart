@@ -14,8 +14,14 @@ class UserDetailResult {
   @JsonKey(name: 'user_name')
   final String? userName;
 
+  /// 昵称
+  final String? nickname;
+
   /// 头像地址
-  final String? img;
+  final String? pic;
+
+  /// 性别 (1: 男, 2: 女)
+  final int? gender;
 
   /// VIP类型
   @JsonKey(name: 'vip_type', fromJson: _parseInt)
@@ -26,18 +32,39 @@ class UserDetailResult {
   final int? isVip;
 
   /// 粉丝数
-  @JsonKey(name: 'fans_count', fromJson: _parseInt)
-  final int? fansCount;
+  final int? fans;
 
   /// 关注数
-  @JsonKey(name: 'follow_count', fromJson: _parseInt)
-  final int? followCount;
+  final int? follows;
+
+  /// 城市
+  final String? city;
+
+  /// 省份
+  final String? province;
+
+  /// 签名
+  final String? descri;
 
   /// Creates a new [UserDetailResult] instance.
-  UserDetailResult({this.userId, this.userName, this.img, this.vipType, this.isVip, this.fansCount, this.followCount});
+  UserDetailResult({
+    this.userId,
+    this.userName,
+    this.nickname,
+    this.pic,
+    this.gender,
+    this.vipType,
+    this.isVip,
+    this.fans,
+    this.follows,
+    this.city,
+    this.province,
+    this.descri,
+  });
 
   /// Creates a [UserDetailResult] from JSON data.
-  factory UserDetailResult.fromJson(Map<String, dynamic> json) => _$UserDetailResultFromJson(json);
+  factory UserDetailResult.fromJson(Map<String, dynamic> json) =>
+      _$UserDetailResultFromJson(json);
   Map<String, dynamic> toJson() => _$UserDetailResultToJson(this);
 }
 

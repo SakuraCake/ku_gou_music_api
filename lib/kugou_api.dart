@@ -37,6 +37,33 @@
 /// - **验证码登录** [LoginApi.byCaptcha]：先调用 [LoginApi.sendCaptcha] 发送验证码
 /// - **二维码登录** [LoginApi.qrCodeStream]：返回状态流，可通过 [LoginApi.qrInfo]
 ///   获取二维码图片（含 base64 编码的 PNG 图片）
+///
+/// ## 自动刷新登录
+///
+/// [KuGouApi.enableAutoRefresh] 方法用于启用自动刷新登录功能：
+/// ```dart
+/// final api = KuGouApi(token: 'your_token', userid: 12345);
+///
+/// // 启用自动刷新登录（默认每24小时刷新一次）
+/// api.enableAutoRefresh(
+///   interval: Duration(hours: 24),
+///   onRefresh: (result) {
+///     print('Token refreshed: ${result.token}');
+///   },
+///   onError: (e) {
+///     print('Refresh failed: $e');
+///   },
+/// );
+///
+/// // 确保登录状态
+/// final result = await api.ensureLoggedIn();
+///
+/// // 禁用自动刷新
+/// api.disableAutoRefresh();
+///
+/// // 清理资源
+/// api.dispose();
+/// ```
 library;
 
 export 'src/client/kugou_api.dart';

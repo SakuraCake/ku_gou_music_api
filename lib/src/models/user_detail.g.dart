@@ -10,22 +10,32 @@ UserDetailResult _$UserDetailResultFromJson(Map<String, dynamic> json) =>
     UserDetailResult(
       userId: _parseInt(json['user_id']),
       userName: json['user_name'] as String?,
-      img: json['img'] as String?,
+      nickname: json['nickname'] as String?,
+      pic: json['pic'] as String?,
+      gender: (json['gender'] as num?)?.toInt(),
       vipType: _parseInt(json['vip_type']),
       isVip: _parseInt(json['is_vip']),
-      fansCount: _parseInt(json['fans_count']),
-      followCount: _parseInt(json['follow_count']),
+      fans: (json['fans'] as num?)?.toInt(),
+      follows: (json['follows'] as num?)?.toInt(),
+      city: json['city'] as String?,
+      province: json['province'] as String?,
+      descri: json['descri'] as String?,
     );
 
 Map<String, dynamic> _$UserDetailResultToJson(UserDetailResult instance) =>
     <String, dynamic>{
       'user_id': instance.userId,
       'user_name': instance.userName,
-      'img': instance.img,
+      'nickname': instance.nickname,
+      'pic': instance.pic,
+      'gender': instance.gender,
       'vip_type': instance.vipType,
       'is_vip': instance.isVip,
-      'fans_count': instance.fansCount,
-      'follow_count': instance.followCount,
+      'fans': instance.fans,
+      'follows': instance.follows,
+      'city': instance.city,
+      'province': instance.province,
+      'descri': instance.descri,
     };
 
 UserPlaylistResult _$UserPlaylistResultFromJson(Map<String, dynamic> json) =>

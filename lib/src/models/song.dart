@@ -383,3 +383,111 @@ class HashOffset {
       _$HashOffsetFromJson(json);
   Map<String, dynamic> toJson() => _$HashOffsetToJson(this);
 }
+
+/// 歌曲私有播放地址结果（新版接口）
+@JsonSerializable()
+class SongPrivUrlResult {
+  /// 状态码，1表示成功
+  final int? status;
+
+  /// 错误码
+  final int? errorCode;
+
+  /// 错误信息
+  final String? errorMsg;
+
+  /// 歌曲信息列表
+  final List<SongPrivUrlItem>? songs;
+
+  SongPrivUrlResult({
+    this.status,
+    this.errorCode,
+    this.errorMsg,
+    this.songs,
+  });
+
+  factory SongPrivUrlResult.fromJson(Map<String, dynamic> json) =>
+      _$SongPrivUrlResultFromJson(json);
+  Map<String, dynamic> toJson() => _$SongPrivUrlResultToJson(this);
+}
+
+/// 歌曲私有播放地址项
+@JsonSerializable()
+class SongPrivUrlItem {
+  /// 歌曲哈希值
+  final String? hash;
+
+  /// 歌曲名称
+  final String? audioName;
+
+  /// 歌手名称
+  final String? singerName;
+
+  /// 专辑名称
+  final String? albumName;
+
+  /// 时长（毫秒）
+  @JsonKey(name: 'time_len', fromJson: _parseInt)
+  final int? timeLen;
+
+  /// 音质列表
+  final List<AudioQualityItem>? qualities;
+
+  SongPrivUrlItem({
+    this.hash,
+    this.audioName,
+    this.singerName,
+    this.albumName,
+    this.timeLen,
+    this.qualities,
+  });
+
+  factory SongPrivUrlItem.fromJson(Map<String, dynamic> json) =>
+      _$SongPrivUrlItemFromJson(json);
+  Map<String, dynamic> toJson() => _$SongPrivUrlItemToJson(this);
+}
+
+/// 音频音质项
+@JsonSerializable()
+class AudioQualityItem {
+  /// 音质等级
+  final String? quality;
+
+  /// 比特率
+  @JsonKey(name: 'bitrate', fromJson: _parseInt)
+  final int? bitrate;
+
+  /// 文件大小
+  @JsonKey(name: 'file_size', fromJson: _parseInt)
+  final int? fileSize;
+
+  /// 文件扩展名
+  final String? extName;
+
+  /// 播放地址
+  final String? url;
+
+  /// 备用地址
+  @JsonKey(name: 'backup_url')
+  final List<String>? backupUrl;
+
+  /// 权限状态，1表示有权限
+  @JsonKey(name: 'priv_status', fromJson: _parseInt)
+  final int? privStatus;
+
+  AudioQualityItem({
+    this.quality,
+    this.bitrate,
+    this.fileSize,
+    this.extName,
+    this.url,
+    this.backupUrl,
+    this.privStatus,
+  });
+
+  factory AudioQualityItem.fromJson(Map<String, dynamic> json) =>
+      _$AudioQualityItemFromJson(json);
+  Map<String, dynamic> toJson() => _$AudioQualityItemToJson(this);
+
+  bool get isVip => privStatus != 1;
+}

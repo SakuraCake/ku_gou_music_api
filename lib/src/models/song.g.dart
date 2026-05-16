@@ -149,3 +149,67 @@ Map<String, dynamic> _$HashOffsetToJson(HashOffset instance) =>
       'file_type': instance.fileType,
       'offset_hash': instance.offsetHash,
     };
+
+SongPrivUrlResult _$SongPrivUrlResultFromJson(Map<String, dynamic> json) =>
+    SongPrivUrlResult(
+      status: (json['status'] as num?)?.toInt(),
+      errorCode: (json['errorCode'] as num?)?.toInt(),
+      errorMsg: json['errorMsg'] as String?,
+      songs: (json['songs'] as List<dynamic>?)
+          ?.map((e) => SongPrivUrlItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$SongPrivUrlResultToJson(SongPrivUrlResult instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'errorCode': instance.errorCode,
+      'errorMsg': instance.errorMsg,
+      'songs': instance.songs,
+    };
+
+SongPrivUrlItem _$SongPrivUrlItemFromJson(Map<String, dynamic> json) =>
+    SongPrivUrlItem(
+      hash: json['hash'] as String?,
+      audioName: json['audioName'] as String?,
+      singerName: json['singerName'] as String?,
+      albumName: json['albumName'] as String?,
+      timeLen: _parseInt(json['time_len']),
+      qualities: (json['qualities'] as List<dynamic>?)
+          ?.map((e) => AudioQualityItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$SongPrivUrlItemToJson(SongPrivUrlItem instance) =>
+    <String, dynamic>{
+      'hash': instance.hash,
+      'audioName': instance.audioName,
+      'singerName': instance.singerName,
+      'albumName': instance.albumName,
+      'time_len': instance.timeLen,
+      'qualities': instance.qualities,
+    };
+
+AudioQualityItem _$AudioQualityItemFromJson(Map<String, dynamic> json) =>
+    AudioQualityItem(
+      quality: json['quality'] as String?,
+      bitrate: _parseInt(json['bitrate']),
+      fileSize: _parseInt(json['file_size']),
+      extName: json['extName'] as String?,
+      url: json['url'] as String?,
+      backupUrl: (json['backup_url'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      privStatus: _parseInt(json['priv_status']),
+    );
+
+Map<String, dynamic> _$AudioQualityItemToJson(AudioQualityItem instance) =>
+    <String, dynamic>{
+      'quality': instance.quality,
+      'bitrate': instance.bitrate,
+      'file_size': instance.fileSize,
+      'extName': instance.extName,
+      'url': instance.url,
+      'backup_url': instance.backupUrl,
+      'priv_status': instance.privStatus,
+    };

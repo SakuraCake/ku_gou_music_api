@@ -3,17 +3,31 @@ import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import '../config/constants.dart';
 
-/// 使用 RSA 公钥加密数据。
+/// 使用 RSA 公钥加密数据（原始 RSA，无填充）。
 ///
 /// [data] 待加密的明文字符串，[publicKey] Base64 编码的 RSA 公钥，
 /// 未提供时使用默认的标准版公钥。返回十六进制编码的密文。
 String cryptoRSAEncrypt(String data, {String? publicKey}) {
   final key = _parseRsaPublicKey(publicKey ?? kStandardRsaPublicKey);
-  final encryptor = PKCS1Encoding(RSAEngine())
-    ..init(true, PublicKeyParameter<RSAPublicKey>(key));
   final input = utf8.encode(data);
-  final output = encryptor.process(Uint8List.fromList(input));
-  return output.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
+  final keyLength = (key.modulus!.bitLength + 7) ~/ 8;
+
+  if (input.length > keyLength) {
+    throw ArgumentError('Data length exceeds key size');
+  }
+
+  final padded = Uint8List(keyLength);
+  padded.setAll(0, input);
+
+  final message = BigInt.parse(
+    padded.map((b) => b.toRadixString(16).padLeft(2, '0')).join(),
+    radix: 16,
+  );
+
+  final encrypted = message.modPow(key.exponent ?? BigInt.zero, key.modulus!);
+
+  return encrypted.toRadixString(16).padLeft(keyLength * 2, '0');
 }
 
 RSAPublicKey _parseRsaPublicKey(String base64Key) {

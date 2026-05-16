@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'http_client.dart';
 import 'api_client.dart';
 import '../api/search_api.dart';
@@ -27,6 +28,7 @@ import '../util/logger.dart';
 import '../util/cache.dart';
 import '../util/cookie_jar.dart';
 import '../util/retry.dart';
+import '../models/user.dart';
 
 /// 酷狗音乐 API 主入口类。
 ///
@@ -138,6 +140,81 @@ class KuGouApi {
     sheet = SheetApi(client);
     theme = ThemeApi(client);
     misc = MiscApi(client);
+  }
+
+  Timer? _refreshTimer;
+
+  /// 启用自动刷新登录功能。
+  ///
+  /// [interval] 指定刷新间隔时间，默认值为 24 小时。
+  /// [onRefresh] 刷新成功时的回调函数，参数为 [LoginResult]。
+  /// [onError] 刷新失败时的回调函数，参数为错误对象。
+  ///
+  /// 自动刷新会定期调用 [LoginApi.refreshToken] 来保持登录状态。
+  /// 需要先设置有效的 token 和 userid。
+  ///
+  /// ```dart
+  /// final api = KuGouApi(token: 'your_token', userid: 12345);
+  ///
+  /// api.enableAutoRefresh(
+  ///   interval: Duration(hours: 12),
+  ///   onRefresh: (result) {
+  ///     print('Token refreshed successfully');
+  ///   },
+  ///   onError: (e) {
+  ///     print('Refresh failed: $e');
+  ///   },
+  /// );
+  /// ```
+  void enableAutoRefresh({
+    Duration interval = const Duration(hours: 24),
+    void Function(LoginResult)? onRefresh,
+    void Function(Object)? onError,
+  }) {
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer.periodic(interval, (_) async {
+      try {
+        final result = await login.refreshToken();
+        if (onRefresh != null) {
+          onRefresh(result);
+        }
+      } catch (e) {
+        if (onError != null) {
+          onError(e);
+        }
+      }
+    });
+  }
+
+  /// 禁用自动刷新登录功能。
+  ///
+  /// 停止定时刷新任务，释放相关资源。
+  void disableAutoRefresh() {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+  }
+
+  /// 确保用户已登录。
+  ///
+  /// 如果已设置 token，则调用 [LoginApi.refreshToken] 刷新登录状态。
+  /// 如果未设置 token，返回失败的 [LoginResult]。
+  ///
+  /// 返回 [LoginResult]，包含刷新是否成功的信息。
+  Future<LoginResult> ensureLoggedIn() async {
+    if (httpClient.token != null && httpClient.token!.isNotEmpty) {
+      return login.refreshToken();
+    }
+    return LoginResult(success: false, message: '请先登录');
+  }
+
+  /// 释放资源。
+  ///
+  /// 停止自动刷新定时器，关闭 HTTP 客户端连接。
+  /// 调用此方法后，不再应使用此实例。
+  void dispose() {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+    httpClient.close();
   }
 
   /// 创建 [KuGouApi] 实例的工厂构造函数。

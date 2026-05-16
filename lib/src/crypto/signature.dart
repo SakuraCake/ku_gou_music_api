@@ -79,3 +79,15 @@ String signParams(
 String signCloudKey(String hash, String pid) {
   return cryptoMd5('musicclound$hash$pid$kCloudKeySalt');
 }
+
+/// 计算登录时间戳签名。
+///
+/// [clienttimeMs] 客户端时间戳（毫秒），[appid] 应用 ID，
+/// [clientver] 客户端版本号，[isLite] 是否使用轻量版盐值。
+/// 返回 MD5 签名字符串。
+String signParamsKey(int clienttimeMs, {int? appid, int? clientver, bool isLite = false}) {
+  final salt = isLite ? kLiteSignatureSalt : kStandardSignatureSalt;
+  final effectiveAppid = appid ?? (isLite ? kLiteAppid : kStandardAppid);
+  final effectiveClientver = clientver ?? (isLite ? kLiteClientver : kStandardClientver);
+  return cryptoMd5('$effectiveAppid$salt$effectiveClientver$clienttimeMs');
+}

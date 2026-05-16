@@ -37,12 +37,12 @@ void main() {
     });
 
     test('encrypt with custom key and iv', () {
-      const key = '00112233445566778899aabbccddeeff';
-      const iv = 'ffeeddccbbaa99887766554433221100';
+      const key = '0011223344556677';
+      const iv = 'ffeeddccbbaa9988';
       const original = 'test data';
       final encrypted = cryptoAesEncrypt(original, key: key, iv: iv);
-      expect(encrypted['key'], equals(key));
-      final decrypted = cryptoAesDecrypt(encrypted['str']!, key, iv: iv);
+      expect(encrypted, isA<String>());
+      final decrypted = cryptoAesDecrypt(encrypted as String, key, iv: iv);
       expect(decrypted, equals(original));
     });
   });
