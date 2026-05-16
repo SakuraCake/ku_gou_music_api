@@ -14,7 +14,7 @@
 
 ```yaml
 dependencies:
-  kugou_api: ^0.0.3
+  kugou_api: ^0.0.5
 ```
 
 或：

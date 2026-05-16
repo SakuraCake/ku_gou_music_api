@@ -14,7 +14,7 @@ Inspired by [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node
 
 ```yaml
 dependencies:
-  kugou_api: ^0.0.2
+  kugou_api: ^0.0.5
 ```
 
 Or:
