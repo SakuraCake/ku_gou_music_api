@@ -1,3 +1,5 @@
+**English** | [中文](README_CN.md)
+
 # kugou_api
 
 A comprehensive Dart package for KuGou Music API with full API coverage, authentication, caching, and more.
