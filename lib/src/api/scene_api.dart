@@ -16,31 +16,6 @@ class SceneApi extends BaseApi {
     );
   }
 
-  /// 获取场景列表 V2（已废弃），API 已下线，服务端返回 HTML，暂不可用
-  @Deprecated('API 已下线，服务端返回 HTML，暂不可用')
-  Future<SceneListResult> listsV2({
-    int? sceneId,
-    String sort = 'rec',
-    int page = 1,
-    int pagesize = 30,
-  }) async {
-    final sortType = {'rec': 1, 'hot': 2, 'new': 3};
-    final params = <String, dynamic>{
-      'page': page,
-      'pagesize': pagesize,
-      'sort_type': sortType[sort] ?? 1,
-      'kugouid': client.httpClient.userid ?? 0,
-    };
-    if (sceneId != null) params['scene_id'] = sceneId;
-    return client.post<SceneListResult>(
-      '/scene/v1/scene/list_v2',
-      params: params,
-      body: {'exposure': []},
-      encryptType: EncryptType.android,
-      fromJson: (json) => SceneListResult.fromJson(json),
-    );
-  }
-
   /// 获取场景模块列表，[sceneId] 为场景 ID
   Future<SceneModuleResult> module({required int sceneId}) async {
     return client.post<SceneModuleResult>(

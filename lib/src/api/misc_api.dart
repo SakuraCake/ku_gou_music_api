@@ -84,8 +84,7 @@ class MiscApi extends BaseApi {
     );
   }
 
-  /// 刷一刷推荐（已废弃），API 已下线，服务端返回 HTML，暂不可用
-  @Deprecated('API 已下线，服务端返回 HTML，暂不可用')
+  /// 刷一刷推荐，获取个性化推荐歌曲
   Future<BrushResult> brush() async {
     final dateTime = DateTime.now().millisecondsSinceEpoch;
     final key = signParams(

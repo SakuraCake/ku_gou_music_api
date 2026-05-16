@@ -171,8 +171,7 @@ class SearchApi extends BaseApi {
     );
   }
 
-  /// 综合搜索（已废弃），API 已下线，服务端返回 HTML，暂不可用
-  @Deprecated('API 已下线，服务端返回 HTML，暂不可用')
+  /// 综合搜索，同时搜索歌曲、MV、歌单、专辑、K歌、电台、歌手等
   Future<SearchComplexResult> complex({
     required String keyword,
     int page = 1,

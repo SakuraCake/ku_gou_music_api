@@ -22,11 +22,8 @@
 /// 完整的 API 列表及实现状况请参阅 README.md。
 ///
 /// 未实现的部分包括：青少年频道系列、云盘、登录扩展、排行榜扩展、
-/// 歌单全量曲目、歌手 MV/荣誉、用户云盘/视频收藏、搜索混合/歌词搜索等。
-///
-/// 以下 6 个接口因服务端下线已标记 `@Deprecated`：
-/// `SearchApi.complex`、`SongApi.climax`、`SongApi.rankingFilter`、
-/// `FmApi.personal`、`SceneApi.listsV2`、`MiscApi.brush`。
+/// 歌单全量曲目、歌手 MV/荣誉、用户云盘/视频收藏、搜索混合/歌词搜索、
+/// 歌曲高潮片段/排名筛选、场景列表 V2 等。
 ///
 /// CookieJar 不内置文件持久化，需用户自行保存 `serialize()` 的输出。
 ///

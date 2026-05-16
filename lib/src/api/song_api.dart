@@ -1,12 +1,7 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
-
 import '../client/base_api.dart';
 import '../client/http_client.dart';
 import '../crypto/md5.dart';
 import '../crypto/signature.dart';
-import '../exception.dart';
 import '../models/song.dart';
 import '../util/random.dart';
 
@@ -103,44 +98,6 @@ class SongApi extends BaseApi {
     return [];
   }
 
-  /// 获取歌曲高潮片段（已废弃），API 已下线，CDN 服务器返回 missing all client info，暂不可用
-  @Deprecated('API 已下线，CDN 服务器返回 missing all client info，暂不可用')
-  Future<SongClimaxResult> climax({required String hash}) async {
-    final data = hash.split(',').map((s) => {'hash': s}).toList();
-
-    final paramsMap = <String, dynamic>{
-      'appid': client.httpClient.config.appid,
-      'clientver': client.httpClient.config.clientver,
-      'data': data,
-    };
-
-    final signature = signatureAndroidParams(paramsMap, null, client.httpClient.config.isLite);
-
-    final sortedKeys = paramsMap.keys.toList()..sort();
-    final query = sortedKeys.map((key) {
-      final value = paramsMap[key];
-      final strValue = value is Map || value is List ? jsonEncode(value) : value.toString();
-      return '$key=${Uri.encodeComponent(strValue)}';
-    }).join('&');
-
-    final url = 'https://expendablekmrcdn.kugou.com/v1/audio_climax/audio?$query&signature=$signature';
-
-    final response = await http.get(Uri.parse(url));
-    final result = jsonDecode(response.body) as Map<String, dynamic>;
-    if (result['status'] != 1) {
-      throw KuGouApiException(
-        status: result['status'] as int? ?? 0,
-        code: result['error_code'] as int? ?? result['errcode'] as int? ?? 0,
-        message: result['errmsg']?.toString() ?? result['error_msg']?.toString() ?? '',
-      );
-    }
-    final dataField = result['data'];
-    if (dataField is Map<String, dynamic>) {
-      return SongClimaxResult.fromJson(dataField);
-    }
-    return SongClimaxResult.fromJson(result);
-  }
-
   /// 获取歌曲排名信息，[albumAudioId] 为专辑音频 ID
   Future<SongRankingResult> ranking({required int albumAudioId}) async {
     return client.get<SongRankingResult>(
@@ -150,25 +107,6 @@ class SongApi extends BaseApi {
       },
       encryptType: EncryptType.android,
       fromJson: (json) => SongRankingResult.fromJson(json),
-    );
-  }
-
-  /// 获取歌曲排名筛选（已废弃），API 返回参数错误，可能需要登录或已下线，暂不可用
-  @Deprecated('API 返回参数错误，可能需要登录或已下线，暂不可用')
-  Future<SongRankingFilterResult> rankingFilter({
-    required int albumAudioId,
-    int page = 1,
-    int pagesize = 30,
-  }) async {
-    return client.get<SongRankingFilterResult>(
-      '/grow/v1/song_ranking/unlock/v2/ranking_filter',
-      params: {
-        'album_audio_id': albumAudioId,
-        'page': page,
-        'pagesize': pagesize,
-      },
-      encryptType: EncryptType.android,
-      fromJson: (json) => SongRankingFilterResult.fromJson(json),
     );
   }
 

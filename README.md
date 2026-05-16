@@ -4,29 +4,11 @@
 
 灵感来自 [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node.js 项目，将其核心功能移植为 Dart 原生包。
 
-## 灵感来自
-
-[MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi)
-
 ## 环境要求
 
-需要 Dart SDK 3.11.4+ 环境
+- Dart SDK ^3.11.4
 
-## 工作原理
-
-伪造请求头，调用官方 API
-
-## 免责声明
-
-> 1. 本项目仅供学习使用，请尊重版权，请勿利用此项目从事商业行为及非法用途!
-> 2. 使用本项目的过程中可能会产生版权数据。对于这些版权数据，本项目不拥有它们的所有权。为了避免侵权，使用者务必在 24 小时内清除使用本项目的过程中所产生的版权数据。
-> 3. 由于使用本项目产生的包括由于本协议或由于使用或无法使用本项目而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害（包括但不限于因商誉损失、停工、计算机故障或故障引起的损害赔偿，或任何及所有其他商业损害或损失）由使用者负责。
-> 4. **禁止在违反当地法律法规的情况下使用本项目。** 对于使用者在明知或不知当地法律法规不允许的情况下使用本项目所造成的任何违法违规行为由使用者承担，本项目不承担由此造成的任何直接、间接、特殊、偶然或结果性责任。
-> 5. 音乐平台不易，请尊重版权，支持正版。
-> 6. 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作及捐赠。
-> 7. 如果官方音乐平台觉得本项目不妥，可联系本项目更改或移除。
-
-### 安装
+## 安装
 
 ```yaml
 dependencies:
@@ -39,14 +21,9 @@ dependencies:
 dart pub add kugou_api
 ```
 
-### 使用接口为概念版
+## 快速开始
 
-```dart
-final api = KuGouApi(platform: Platform.lite);
-// 注意不同版本的平台的 token 是不通用的
-```
-
-### 使用
+### 基本使用
 
 ```dart
 import 'package:kugou_api/kugou_api.dart';
@@ -60,34 +37,48 @@ void main() async {
 }
 ```
 
+### 使用概念版接口
+
+```dart
+final api = KuGouApi(platform: Platform.lite);
+// 注意不同版本平台的 token 不通用
+```
+
 ### 代理配置
 
 ```dart
 final api = KuGouApi(proxy: 'http://127.0.0.1:7890');
 ```
 
-### 登录
+## 登录
+
+### 密码登录
 
 ```dart
-// 密码登录
 final loginResult = await api.login.byPassword(
   username: 'your_username',
   password: 'your_password',
 );
+```
 
-// 验证码登录
+### 验证码登录
+
+```dart
 final result = await api.login.sendCaptcha(phone: '13800138000');
 if (result.success) {
   final loginResult = await api.login.byCaptcha(phone: '13800138000', captcha: '1234');
 }
+```
 
-// 二维码登录
+### 二维码登录
+
+```dart
 await for (final state in api.login.qrCodeStream()) {
   if (state == QrCodeState.confirmed) break;
 }
 ```
 
-### 自动刷新登录
+## 自动刷新登录
 
 ```dart
 // 初始化已登录的 API
@@ -114,7 +105,7 @@ api.disableAutoRefresh();
 api.dispose();
 ```
 
-### Cookie 管理
+## Cookie 管理
 
 内置 `CookieJar`，自动处理请求/响应 Cookie：
 
@@ -148,7 +139,7 @@ final json = jsonDecode(await File('cookies.json').readAsString()) as Map<String
 api.cookieJar.loadFromMap(json.map((k, v) => MapEntry(k, v as Map<String, dynamic>)));
 ```
 
-### 自定义配置
+## 自定义配置
 
 ```dart
 final api = KuGouApi(
@@ -168,7 +159,7 @@ final api = KuGouApi(
 );
 ```
 
-### 错误处理
+## 错误处理
 
 ```dart
 try {
@@ -192,7 +183,7 @@ try {
 - [x] 热搜列表 (`search.hotDetail`)
 - [x] 搜索建议 (`search.suggest`)
 - [x] 默认搜索关键词 (`search.defaultWord`)
-- [x] 综合搜索（已废弃）(`search.complex`)
+- [x] 综合搜索 (`search.complex`)
 - [ ] 搜索混合 (`search_mixed`)
 - [ ] 歌词搜索 (`search_lyric`)
 
@@ -201,8 +192,8 @@ try {
 - [x] 获取音乐 URL (`song.url`)
 - [x] 获取音乐详情 (`song.detail`)
 - [x] 歌曲排行 (`song.ranking`)
-- [x] 歌曲高潮片段（已废弃）(`song.climax`)
-- [x] 歌曲排行筛选（已废弃）(`song.rankingFilter`)
+- [ ] 歌曲高潮片段 (`song.climax`)
+- [ ] 歌曲排名筛选 (`song.rankingFilter`)
 - [ ] 获取音乐 URL（新版）(`song_url_new`)
 
 ### 歌词
@@ -306,7 +297,7 @@ try {
 
 - [x] FM 分类 (`fm.classes`)
 - [x] FM 歌曲 (`fm.songs`)
-- [x] 私人 FM（已废弃）(`fm.personal`)
+- [x] 私人 FM (`fm.personal`)
 - [ ] FM 推荐 (`fm_recommend`)
 - [ ] FM 图片 (`fm_image`)
 
@@ -357,7 +348,7 @@ try {
 ### 场景
 
 - [x] 场景音乐列表 (`scene.lists`)
-- [x] 场景音乐详情 V2（已废弃）(`scene.listsV2`)
+- [ ] 场景音乐列表 V2 (`scene.listsV2`)
 - [x] 获取场景音乐模块 (`scene.module`)
 - [x] 获取场景音乐模块信息 (`scene.moduleInfo`)
 - [x] 获取场景音乐列表 (`scene.audioList`)
@@ -386,7 +377,7 @@ try {
 - [x] 新歌速递 (`misc.latestSongs`)
 - [x] 获取服务器时间 (`misc.serverNow`)
 - [x] 获取权限信息 (`misc.privilegeLite`)
-- [x] 刷刷（已废弃）(`misc.brush`)
+- [x] 刷一刷推荐 (`misc.brush`)
 - [ ] 注册设备 (`register_dev`)
 - [ ] 验证码发送 (`captcha_sent`)
 - [ ] PC 电台 (`pc_diantai`)
@@ -430,15 +421,22 @@ POST 请求签名会自动将请求体（JSON 编码）纳入签名计算。
 ## 已知限制
 
 - 部分接口需要登录后才能使用（如 `IpApi.zoneHome`），可通过 `CookieJar` 传入初始 Cookie 或登录后自动获取
-- 以下接口因服务端下线已标记 `@Deprecated`：
-  - `SearchApi.complex` — 服务端返回 HTML
+- 以下接口因服务端问题暂未实现：
   - `SongApi.climax` — CDN 服务器拒绝请求
   - `SongApi.rankingFilter` — 参数错误
-  - `FmApi.personal` — 服务端返回 HTML
   - `SceneApi.listsV2` — 服务端返回 HTML
-  - `MiscApi.brush` — 服务端返回 HTML
 - CookieJar 不内置文件持久化，需用户自行保存 `serialize()` 的输出
+
+## 免责声明
+
+> 1. 本项目仅供学习使用，请尊重版权，请勿利用此项目从事商业行为及非法用途!
+> 2. 使用本项目的过程中可能会产生版权数据。对于这些版权数据，本项目不拥有它们的所有权。为了避免侵权，使用者务必在 24 小时内清除使用本项目的过程中所产生的版权数据。
+> 3. 由于使用本项目产生的包括由于本协议或由于使用或无法使用本项目而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害（包括但不限于因商誉损失、停工、计算机故障或故障引起的损害赔偿，或任何及所有其他商业损害或损失）由使用者负责。
+> 4. **禁止在违反当地法律法规的情况下使用本项目。** 对于使用者在明知或不知当地法律法规不允许的情况下使用本项目所造成的任何违法违规行为由使用者承担，本项目不承担由此造成的任何直接、间接、特殊、偶然或结果性责任。
+> 5. 音乐平台不易，请尊重版权，支持正版。
+> 6. 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作及捐赠。
+> 7. 如果官方音乐平台觉得本项目不妥，可联系本项目更改或移除。
 
 ## License
 
-[BSD 3-Clause "New" or "Revised" License)](LICENSE)
+[BSD 3-Clause "New" or "Revised" License](LICENSE)

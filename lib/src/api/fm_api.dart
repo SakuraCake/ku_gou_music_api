@@ -93,8 +93,7 @@ class FmApi extends BaseApi {
     );
   }
 
-  /// 个性化电台推荐（已废弃），API 已下线，服务端返回 HTML，暂不可用
-  @Deprecated('API 已下线，服务端返回 HTML，暂不可用')
+  /// 个性化电台推荐，获取私人 FM 推荐歌曲
   Future<PersonalFmResult> personal({
     String action = 'play',
     String? songId,
