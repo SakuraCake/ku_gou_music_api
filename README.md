@@ -28,9 +28,7 @@
 
 ### 安装
 
-暂未上传至PUB.DEVQWQ，请自行下载和使用
-
-<!-- ```yaml
+```yaml
 dependencies:
   kugou_api: ^0.0.1
 ```
@@ -39,7 +37,7 @@ dependencies:
 
 ```shell
 dart pub add kugou_api
-``` -->
+```
 
 ### 使用接口为概念版
 
