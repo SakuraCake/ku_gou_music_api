@@ -32,7 +32,4 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 /build/
 /coverage/
-KuGouMusicApi/
-
-# Integration test with real credentials
-test/full_integration_test.dart
+ku_gou_music_api/
