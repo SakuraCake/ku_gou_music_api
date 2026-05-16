@@ -1,0 +1,12 @@
+doc/
+docs/
+.github/
+app.js
+Dockerfile
+.dockerignore
+.env.example
+.prettierrc.json
+.metadata
+ku_gou_music_api/
+coverage/
+.metadata
