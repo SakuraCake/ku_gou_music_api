@@ -1,6 +1,7 @@
 ## 0.0.4
 
 - Added Chinese README (`README_CN.md`) with language switcher between English and Chinese
+- Added GitHub Actions publish workflow (`.github/workflows/publish.yml`)
 - Fixed missing changelog entries for test fixes and documentation updates
 
 ## 0.0.3
