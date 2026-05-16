@@ -1,3 +1,14 @@
+## 0.0.3
+
+- Rewrote README in English for pub.dev compliance
+- Added interactive example (`example/kugou_api_example.dart`)
+- Updated pointycastle dependency to ^4.0.0
+- Fixed various code analysis warnings
+- Fixed search API tests to match new `complexsearch.kugou.com` endpoint
+- Fixed lyric API tests to remove non-existent `client=mobi` parameter
+- Fixed song API tests for lossless quality parameter (`flac`)
+- All 119 tests passing
+
 ## 0.0.2
 
 - Fixed song URL retrieval for high-quality audio (320kbps, FLAC)

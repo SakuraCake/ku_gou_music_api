@@ -1,29 +1,29 @@
 # kugou_api
 
-酷狗音乐 API 的 Dart 封装库，纯 Dart 实现，无 Flutter 依赖。
+A comprehensive Dart package for KuGou Music API with full API coverage, authentication, caching, and more.
 
-灵感来自 [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node.js 项目，将其核心功能移植为 Dart 原生包。
+Inspired by [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node.js project, ported to native Dart.
 
-## 环境要求
+## Requirements
 
 - Dart SDK ^3.11.4
 
-## 安装
+## Installation
 
 ```yaml
 dependencies:
-  kugou_api: ^0.0.1
+  kugou_api: ^0.0.2
 ```
 
-或：
+Or:
 
 ```shell
 dart pub add kugou_api
 ```
 
-## 快速开始
+## Quick Start
 
-### 基本使用
+### Basic Usage
 
 ```dart
 import 'package:kugou_api/kugou_api.dart';
@@ -31,28 +31,28 @@ import 'package:kugou_api/kugou_api.dart';
 void main() async {
   final api = KuGouApi();
 
-  // 搜索歌曲
-  final result = await api.search.songs(keyword: '周杰伦', page: 1, pageSize: 10);
+  // Search songs
+  final result = await api.search.songs(keyword: 'Jay Chou', page: 1, pageSize: 10);
   print(result);
 }
 ```
 
-### 使用概念版接口
+### Use Lite Platform
 
 ```dart
 final api = KuGouApi(platform: Platform.lite);
-// 注意不同版本平台的 token 不通用
+// Note: Tokens are not interchangeable between different platforms
 ```
 
-### 代理配置
+### Proxy Configuration
 
 ```dart
 final api = KuGouApi(proxy: 'http://127.0.0.1:7890');
 ```
 
-## 登录
+## Authentication
 
-### 密码登录
+### Password Login
 
 ```dart
 final loginResult = await api.login.byPassword(
@@ -61,7 +61,7 @@ final loginResult = await api.login.byPassword(
 );
 ```
 
-### 验证码登录
+### Captcha Login
 
 ```dart
 final result = await api.login.sendCaptcha(phone: '13800138000');
@@ -70,7 +70,7 @@ if (result.success) {
 }
 ```
 
-### 二维码登录
+### QR Code Login
 
 ```dart
 await for (final state in api.login.qrCodeStream()) {
@@ -78,13 +78,13 @@ await for (final state in api.login.qrCodeStream()) {
 }
 ```
 
-## 自动刷新登录
+## Auto Refresh Login
 
 ```dart
-// 初始化已登录的 API
+// Initialize with existing token
 final api = KuGouApi(token: 'your_token', userid: 12345);
 
-// 启用自动刷新登录（默认每24小时刷新一次）
+// Enable auto refresh (default: every 24 hours)
 api.enableAutoRefresh(
   interval: Duration(hours: 24),
   onRefresh: (result) {
@@ -95,51 +95,51 @@ api.enableAutoRefresh(
   },
 );
 
-// 确保登录状态
+// Ensure logged in
 final result = await api.ensureLoggedIn();
 
-// 禁用自动刷新
+// Disable auto refresh
 api.disableAutoRefresh();
 
-// 清理资源
+// Cleanup resources
 api.dispose();
 ```
 
-## Cookie 管理
+## Cookie Management
 
-内置 `CookieJar`，自动处理请求/响应 Cookie：
+Built-in `CookieJar` for automatic cookie handling:
 
 ```dart
-// 方式一：通过 initialCookies 传入初始 Cookie
+// Option 1: Pass initial cookies
 final api = KuGouApi(initialCookies: {
   'kugou.com': 'token=abc123; userid=42',
 });
 
-// 方式二：通过 cookieJar 手动设置
+// Option 2: Set cookies manually
 api.cookieJar.set(domain: 'kugou.com', name: 'token', value: 'abc123');
 
-// 读取 Cookie
+// Read cookies
 final cookies = api.cookieJar.getCookiesForUrl('https://kugou.com/api');
 ```
 
-### Cookie 持久化
+### Cookie Persistence
 
-`CookieJar` 提供了 `serialize()` / `loadFromMap()` 方法用于序列化，但**不内置文件持久化**——这是有意为之的设计，纯 Dart 包不应假设文件系统可用（如在浏览器端运行时）。用户可自行将序列化数据保存到文件/数据库：
+`CookieJar` provides `serialize()` / `loadFromMap()` methods for serialization. Users should handle persistence themselves:
 
 ```dart
 import 'dart:io';
 import 'dart:convert';
 
-// 保存
+// Save
 final data = api.cookieJar.serialize();
 await File('cookies.json').writeAsString(jsonEncode(data));
 
-// 恢复
+// Restore
 final json = jsonDecode(await File('cookies.json').readAsString()) as Map<String, dynamic>;
 api.cookieJar.loadFromMap(json.map((k, v) => MapEntry(k, v as Map<String, dynamic>)));
 ```
 
-## 自定义配置
+## Custom Configuration
 
 ```dart
 final api = KuGouApi(
@@ -159,283 +159,283 @@ final api = KuGouApi(
 );
 ```
 
-## 错误处理
+## Error Handling
 
 ```dart
 try {
   final detail = await api.song.detail(hash: 'xxx');
 } on KuGouApiException catch (e) {
-  print('API 错误: status=${e.status}, code=${e.code}, message=${e.message}');
+  print('API error: status=${e.status}, code=${e.code}, message=${e.message}');
 } on KuGouNetworkException catch (e) {
-  print('网络错误: ${e.message}');
+  print('Network error: ${e.message}');
 }
 ```
 
-## 功能特性
+## Features
 
-### 搜索
+### Search
 
-- [x] 搜索歌曲 (`search.songs`)
-- [x] 搜索歌单 (`search.playlists`)
-- [x] 搜索专辑 (`search.albums`)
-- [x] 搜索歌词 (`search.lyrics`)
-- [x] 综合搜索 (`search.mixed`)
-- [x] 热搜列表 (`search.hotDetail`)
-- [x] 搜索建议 (`search.suggest`)
-- [x] 默认搜索关键词 (`search.defaultWord`)
-- [x] 综合搜索 (`search.complex`)
-- [ ] 搜索混合 (`search_mixed`)
-- [ ] 歌词搜索 (`search_lyric`)
+- [x] Search songs (`search.songs`)
+- [x] Search playlists (`search.playlists`)
+- [x] Search albums (`search.albums`)
+- [x] Search lyrics (`search.lyrics`)
+- [x] Mixed search (`search.mixed`)
+- [x] Hot search list (`search.hotDetail`)
+- [x] Search suggestions (`search.suggest`)
+- [x] Default search keyword (`search.defaultWord`)
+- [x] Complex search (`search.complex`)
+- [ ] Mixed search (`search_mixed`)
+- [ ] Lyric search (`search_lyric`)
 
-### 歌曲
+### Song
 
-- [x] 获取音乐 URL (`song.url`)
-- [x] 获取音乐详情 (`song.detail`)
-- [x] 歌曲排行 (`song.ranking`)
-- [ ] 歌曲高潮片段 (`song.climax`)
-- [ ] 歌曲排名筛选 (`song.rankingFilter`)
-- [ ] 获取音乐 URL（新版）(`song_url_new`)
+- [x] Get song URL (`song.url`)
+- [x] Get song detail (`song.detail`)
+- [x] Song ranking (`song.ranking`)
+- [ ] Song climax (`song.climax`)
+- [ ] Song ranking filter (`song.rankingFilter`)
+- [ ] Get song URL (new) (`song_url_new`)
 
-### 歌词
+### Lyric
 
-- [x] 歌词搜索 (`lyric.search`)
-- [x] 获取歌词 (`lyric.get`)
+- [x] Lyric search (`lyric.search`)
+- [x] Get lyrics (`lyric.get`)
 
-### 登录
+### Login
 
-- [x] 密码登录 (`login.byPassword`)
-- [x] 发送验证码 (`login.sendCaptcha`)
-- [x] 验证码登录 (`login.byCaptcha`)
-- [x] 二维码登录 (`login.qrCodeStream`)
-- [ ] 手机号登录 (`login_cellphone`)
-- [ ] 设备登录 (`login_device`)
-- [ ] 设备踢出 (`login_device_kick`)
-- [ ] 开放平台登录 (`login_openplat`)
-- [ ] Token 登录 (`login_token`)
-- [ ] 微信登录检查 (`login_wx_check`)
-- [ ] 微信登录创建 (`login_wx_create`)
+- [x] Password login (`login.byPassword`)
+- [x] Send captcha (`login.sendCaptcha`)
+- [x] Captcha login (`login.byCaptcha`)
+- [x] QR code login (`login.qrCodeStream`)
+- [ ] Phone login (`login_cellphone`)
+- [ ] Device login (`login_device`)
+- [ ] Device kick (`login_device_kick`)
+- [ ] Open platform login (`login_openplat`)
+- [ ] Token login (`login_token`)
+- [ ] WeChat login check (`login_wx_check`)
+- [ ] WeChat login create (`login_wx_create`)
 
-### 排行榜
+### Ranking
 
-- [x] 排行列表 (`rank.list`)
-- [x] 排行信息 (`rank.info`)
-- [ ] 排行音频 (`rank_audio`)
-- [ ] 排行榜顶部 (`rank_top`)
-- [ ] 排行榜往期 (`rank_vol`)
+- [x] Ranking list (`rank.list`)
+- [x] Ranking info (`rank.info`)
+- [ ] Ranking audio (`rank_audio`)
+- [ ] Ranking top (`rank_top`)
+- [ ] Ranking history (`rank_vol`)
 
-### 歌单
+### Playlist
 
-- [x] 获取歌单详情 (`playlist.detail`)
-- [x] 获取歌单歌曲 (`playlist.tracks`)
-- [x] 歌单分类 (`playlist.tags`)
-- [x] 相似歌单 (`playlist.similar`)
-- [x] 歌单列表 (`playlist.top`)
-- [x] 收藏歌单/新建歌单 (`playlist.add`)
-- [x] 对歌单添加歌曲 (`playlist.addTracks`)
-- [x] 对歌单删除歌曲 (`playlist.removeTracks`)
-- [x] 删除歌单 (`playlist.delete`)
-- [ ] 歌单效果 (`playlist_effect`)
-- [ ] 获取歌单所有歌曲 (`playlist_track_all`)
-- [ ] 获取歌单所有歌曲（新版）(`playlist_track_all_new`)
+- [x] Get playlist detail (`playlist.detail`)
+- [x] Get playlist tracks (`playlist.tracks`)
+- [x] Playlist categories (`playlist.tags`)
+- [x] Similar playlists (`playlist.similar`)
+- [x] Playlist list (`playlist.top`)
+- [x] Favorite/Create playlist (`playlist.add`)
+- [x] Add tracks to playlist (`playlist.addTracks`)
+- [x] Remove tracks from playlist (`playlist.removeTracks`)
+- [x] Delete playlist (`playlist.delete`)
+- [ ] Playlist effect (`playlist_effect`)
+- [ ] Get all playlist tracks (`playlist_track_all`)
+- [ ] Get all playlist tracks (new) (`playlist_track_all_new`)
 
-### 专辑
+### Album
 
-- [x] 专辑详情 (`album.detail`)
-- [x] 新碟上架 (`album.top`)
-- [ ] 专辑音乐列表 (`album_songs`)
-- [ ] 专辑商店 (`album_shop`)
+- [x] Album detail (`album.detail`)
+- [x] New albums (`album.top`)
+- [ ] Album songs (`album_songs`)
+- [ ] Album shop (`album_shop`)
 
-### 歌手
+### Artist
 
-- [x] 获取歌手详情 (`artist.detail`)
-- [x] 获取歌手单曲 (`artist.audios`)
-- [x] 获取歌手专辑 (`artist.albums`)
-- [x] 获取歌手列表 (`artist.list`)
-- [x] 关注歌手 (`artist.follow`)
-- [x] 取消关注歌手 (`artist.unfollow`)
-- [ ] 获取歌手 MV (`artist_videos`)
-- [ ] 获取关注歌手新歌 (`artist_follow_newsongs`)
-- [ ] 获取歌手荣誉 (`artist_honour`)
+- [x] Get artist detail (`artist.detail`)
+- [x] Get artist songs (`artist.audios`)
+- [x] Get artist albums (`artist.albums`)
+- [x] Get artist list (`artist.list`)
+- [x] Follow artist (`artist.follow`)
+- [x] Unfollow artist (`artist.unfollow`)
+- [ ] Get artist MVs (`artist_videos`)
+- [ ] Get followed artist new songs (`artist_follow_newsongs`)
+- [ ] Get artist honors (`artist_honour`)
 
-### 推荐
+### Recommend
 
-- [x] 每日推荐 (`recommend.everyday`)
-- [x] AI 推荐 (`recommend.ai`)
-- [x] 新歌速递 (`recommend.newSongs`)
-- [ ] 每日推荐好友 (`everyday_friend`)
-- [ ] 历史推荐 (`everyday_history`)
-- [ ] 风格推荐 (`everyday_style_recommend`)
+- [x] Daily recommend (`recommend.everyday`)
+- [x] AI recommend (`recommend.ai`)
+- [x] New songs (`recommend.newSongs`)
+- [ ] Daily recommend friends (`everyday_friend`)
+- [ ] History recommend (`everyday_history`)
+- [ ] Style recommend (`everyday_style_recommend`)
 
-### 评论
+### Comment
 
-- [x] 歌曲评论 (`comment.music`)
-- [x] 评论数 (`comment.count`)
-- [x] 楼层评论 (`comment.floor`)
-- [x] 评论热词 (`comment.hotWord`)
-- [x] 分类评论 (`comment.classify`)
-- [x] 专辑评论 (`comment.album`)
-- [x] 歌单评论 (`comment.playlist`)
+- [x] Song comments (`comment.music`)
+- [x] Comment count (`comment.count`)
+- [x] Floor comments (`comment.floor`)
+- [x] Comment hot words (`comment.hotWord`)
+- [x] Classified comments (`comment.classify`)
+- [x] Album comments (`comment.album`)
+- [x] Playlist comments (`comment.playlist`)
 
-### 用户
+### User
 
-- [x] 获取用户详情 (`user.detail`)
-- [x] 获取用户歌单 (`user.playlists`)
-- [x] 获取用户听歌历史 (`user.history`)
-- [x] 获取用户 VIP 信息 (`user.vipDetail`)
-- [x] 收藏数 (`user.favoriteCount`)
-- [x] 关注歌手 (`user.follow`)
-- [x] 提交听歌历史 (`user.uploadHistory`)
-- [x] 听歌时长上报 (`user.listenTimeAdd`)
-- [ ] 用户关注消息 (`user_follow_message`)
-- [ ] 用户听歌排行 (`user_listen`)
-- [ ] 用户云盘 (`user_cloud`)
-- [ ] 用户云盘 URL (`user_cloud_url`)
-- [ ] 用户视频收藏 (`user_video_collect`)
-- [ ] 用户视频喜欢 (`user_video_love`)
+- [x] Get user detail (`user.detail`)
+- [x] Get user playlists (`user.playlists`)
+- [x] Get user listening history (`user.history`)
+- [x] Get user VIP info (`user.vipDetail`)
+- [x] Favorite count (`user.favoriteCount`)
+- [x] Follow artist (`user.follow`)
+- [x] Submit listening history (`user.uploadHistory`)
+- [x] Listening time report (`user.listenTimeAdd`)
+- [ ] User follow messages (`user_follow_message`)
+- [ ] User listening ranking (`user_listen`)
+- [ ] User cloud (`user_cloud`)
+- [ ] User cloud URL (`user_cloud_url`)
+- [ ] User video favorites (`user_video_collect`)
+- [ ] User video likes (`user_video_love`)
 
 ### FM
 
-- [x] FM 分类 (`fm.classes`)
-- [x] FM 歌曲 (`fm.songs`)
-- [x] 私人 FM (`fm.personal`)
-- [ ] FM 推荐 (`fm_recommend`)
-- [ ] FM 图片 (`fm_image`)
+- [x] FM categories (`fm.classes`)
+- [x] FM songs (`fm.songs`)
+- [x] Personal FM (`fm.personal`)
+- [ ] FM recommend (`fm_recommend`)
+- [ ] FM image (`fm_image`)
 
-### IP 专区
+### IP Zone
 
-- [x] IP 内容列表 (`ip.content`)
-- [x] IP 详情 (`ip.detail`)
-- [x] IP 歌单 (`ip.playlist`)
-- [x] IP 专区分类 (`ip.zone`)
-- [x] IP 专区首页 (`ip.zoneHome`)
+- [x] IP content list (`ip.content`)
+- [x] IP detail (`ip.detail`)
+- [x] IP playlists (`ip.playlist`)
+- [x] IP zone categories (`ip.zone`)
+- [x] IP zone home (`ip.zoneHome`)
 
-### 榜单卡片
+### Top Card
 
-- [x] 榜单卡片 (`top.card`)
-- [x] 青年卡片 (`top.cardYouth`)
-- [x] IP 榜单 (`top.ip`)
-- [x] 榜单歌单 (`top.playlist`)
-- [x] 榜单歌曲 (`top.song`)
+- [x] Top card (`top.card`)
+- [x] Youth card (`top.cardYouth`)
+- [x] IP top (`top.ip`)
+- [x] Top playlist (`top.playlist`)
+- [x] Top songs (`top.song`)
 
-### 图片
+### Images
 
-- [x] 获取歌手和专辑图片 (`images.albumImages`)
-- [x] 获取歌手图片 (`images.audioImages`)
+- [x] Get album and artist images (`images.albumImages`)
+- [x] Get artist images (`images.audioImages`)
 
-### 乐库
+### Music Library
 
-- [x] 乐库推荐 (`yueku.recommend`)
-- [x] 乐库 Banner (`yueku.banner`)
-- [x] 乐库 FM (`yueku.fm`)
+- [x] Music library recommend (`yueku.recommend`)
+- [x] Music library banner (`yueku.banner`)
+- [x] Music library FM (`yueku.fm`)
 
-### 长音频/有声书
+### Long Audio/Audiobook
 
-- [x] 有声书专辑详情 (`longaudio.albumDetail`)
-- [x] 有声书专辑音乐列表 (`longaudio.albumAudios`)
-- [x] 每日推荐 (`longaudio.dailyRecommend`)
-- [x] 排行推荐 (`longaudio.rankRecommend`)
-- [x] VIP 推荐 (`longaudio.vipRecommend`)
-- [x] 每周推荐 (`longaudio.weekRecommend`)
+- [x] Audiobook album detail (`longaudio.albumDetail`)
+- [x] Audiobook album songs (`longaudio.albumAudios`)
+- [x] Daily recommend (`longaudio.dailyRecommend`)
+- [x] Ranking recommend (`longaudio.rankRecommend`)
+- [x] VIP recommend (`longaudio.vipRecommend`)
+- [x] Weekly recommend (`longaudio.weekRecommend`)
 
-### 视频
+### Video
 
-- [x] 获取视频详情 (`video.detail`)
-- [x] 获取视频权限 (`video.privilege`)
-- [x] 获取视频 URL (`video.url`)
-- [ ] 获取歌曲 MV (`kmr_audio_mv`)
-- [ ] 获取音频 MV (`krm_audio`)
+- [x] Get video detail (`video.detail`)
+- [x] Get video privilege (`video.privilege`)
+- [x] Get video URL (`video.url`)
+- [ ] Get song MV (`kmr_audio_mv`)
+- [ ] Get audio MV (`krm_audio`)
 
-### 场景
+### Scene
 
-- [x] 场景音乐列表 (`scene.lists`)
-- [ ] 场景音乐列表 V2 (`scene.listsV2`)
-- [x] 获取场景音乐模块 (`scene.module`)
-- [x] 获取场景音乐模块信息 (`scene.moduleInfo`)
-- [x] 获取场景音乐列表 (`scene.audioList`)
-- [x] 获取场景音乐 (`scene.music`)
-- [x] 获取场景歌单列表 (`scene.collectionList`)
-- [x] 获取场景视频列表 (`scene.videoList`)
+- [x] Scene music list (`scene.lists`)
+- [ ] Scene music list V2 (`scene.listsV2`)
+- [x] Get scene modules (`scene.module`)
+- [x] Get scene module info (`scene.moduleInfo`)
+- [x] Get scene music list (`scene.audioList`)
+- [x] Get scene music (`scene.music`)
+- [x] Get scene playlist list (`scene.collectionList`)
+- [x] Get scene video list (`scene.videoList`)
 
-### 歌谱
+### Sheet Music
 
-- [x] 歌曲曲谱 (`sheet.collection`)
-- [x] 曲谱合集详情 (`sheet.collectionDetail`)
-- [x] 曲谱详情 (`sheet.detail`)
-- [x] 推荐曲谱 (`sheet.hot`)
-- [x] 曲谱列表 (`sheet.list`)
+- [x] Song sheets (`sheet.collection`)
+- [x] Sheet collection detail (`sheet.collectionDetail`)
+- [x] Sheet detail (`sheet.detail`)
+- [x] Hot sheets (`sheet.hot`)
+- [x] Sheet list (`sheet.list`)
 
-### 主题
+### Theme
 
-- [x] 获取主题音乐 (`theme.music`)
-- [x] 获取主题音乐详情 (`theme.musicDetail`)
-- [x] 获取主题歌单 (`theme.playlist`)
-- [x] 获取主题歌单歌曲 (`theme.playlistTrack`)
+- [x] Get theme music (`theme.music`)
+- [x] Get theme music detail (`theme.musicDetail`)
+- [x] Get theme playlists (`theme.playlist`)
+- [x] Get theme playlist tracks (`theme.playlistTrack`)
 
-### 杂项
+### Misc
 
-- [x] 获取歌手列表 (`misc.singerList`)
-- [x] 新歌速递 (`misc.latestSongs`)
-- [x] 获取服务器时间 (`misc.serverNow`)
-- [x] 获取权限信息 (`misc.privilegeLite`)
-- [x] 刷一刷推荐 (`misc.brush`)
-- [ ] 注册设备 (`register_dev`)
-- [ ] 验证码发送 (`captcha_sent`)
-- [ ] PC 电台 (`pc_diantai`)
-- [ ] AI 推荐 (`ai_recommend`)
+- [x] Get artist list (`misc.singerList`)
+- [x] New songs (`misc.latestSongs`)
+- [x] Get server time (`misc.serverNow`)
+- [x] Get privilege info (`misc.privilegeLite`)
+- [x] Shuffle recommend (`misc.brush`)
+- [ ] Register device (`register_dev`)
+- [ ] Send captcha (`captcha_sent`)
+- [ ] PC radio (`pc_diantai`)
+- [ ] AI recommend (`ai_recommend`)
 
-### 青少年频道
+### Youth Channel
 
-- [ ] 获取用户所有频道 (`youth_channel_all`)
-- [ ] 频道安利 (`youth_channel_amway`)
-- [ ] 频道详情 (`youth_channel_detail`)
-- [ ] 相似频道 (`youth_channel_similar`)
-- [ ] 频道订阅 (`youth_channel_sub`)
-- [ ] 频道音乐故事 (`youth_channel_song`)
-- [ ] 频道音乐故事详情 (`youth_channel_song_detail`)
-- [ ] 领取 VIP (`youth_day_vip`)
-- [ ] VIP 升级 (`youth_day_vip_upgrade`)
-- [ ] 动态 (`youth_dynamic`)
-- [ ] 动态最近 (`youth_dynamic_recent`)
-- [ ] 听歌 (`youth_listen_song`)
-- [ ] 月度 VIP 记录 (`youth_month_vip_record`)
-- [ ] 联合 VIP (`youth_union_vip`)
+- [ ] Get all user channels (`youth_channel_all`)
+- [ ] Channel recommend (`youth_channel_amway`)
+- [ ] Channel detail (`youth_channel_detail`)
+- [ ] Similar channels (`youth_channel_similar`)
+- [ ] Channel subscribe (`youth_channel_sub`)
+- [ ] Channel music story (`youth_channel_song`)
+- [ ] Channel music story detail (`youth_channel_song_detail`)
+- [ ] Claim VIP (`youth_day_vip`)
+- [ ] VIP upgrade (`youth_day_vip_upgrade`)
+- [ ] Dynamic (`youth_dynamic`)
+- [ ] Recent dynamic (`youth_dynamic_recent`)
+- [ ] Listen song (`youth_listen_song`)
+- [ ] Monthly VIP record (`youth_month_vip_record`)
+- [ ] Union VIP (`youth_union_vip`)
 - [ ] VIP (`youth_vip`)
-- [ ] 用户歌曲 (`youth_user_song`)
+- [ ] User song (`youth_user_song`)
 
-### 音频扩展
+### Audio Extension
 
-- [ ] 伴奏匹配 (`audio_accompany_matching`)
-- [ ] K 歌数量 (`audio_ktv_total`)
-- [ ] 相关音频 (`audio_related`)
+- [ ] Accompaniment matching (`audio_accompany_matching`)
+- [ ] KTV count (`audio_ktv_total`)
+- [ ] Related audio (`audio_related`)
 
-## 签名算法
+## Signature Algorithm
 
-本库内置三种酷狗 API 签名算法：
+This library includes three KuGou API signature algorithms:
 
-- **Android 签名** — 默认算法，使用 Android 客户端盐值
-- **Web 签名** — Web 端算法，用于二维码登录等接口
-- **Register 签名** — 注册专用算法
+- **Android Signature** - Default algorithm using Android client salt
+- **Web Signature** - Web algorithm for QR code login etc.
+- **Register Signature** - Register-specific algorithm
 
-POST 请求签名会自动将请求体（JSON 编码）纳入签名计算。
+POST request signatures automatically include the request body (JSON encoded) in the signature calculation.
 
-## 已知限制
+## Known Limitations
 
-- 部分接口需要登录后才能使用（如 `IpApi.zoneHome`），可通过 `CookieJar` 传入初始 Cookie 或登录后自动获取
-- 以下接口因服务端问题暂未实现：
-  - `SongApi.climax` — CDN 服务器拒绝请求
-  - `SongApi.rankingFilter` — 参数错误
-  - `SceneApi.listsV2` — 服务端返回 HTML
-- CookieJar 不内置文件持久化，需用户自行保存 `serialize()` 的输出
+- Some endpoints require login (e.g., `IpApi.zoneHome`), use `CookieJar` to pass initial cookies or login first
+- The following endpoints have server issues and are not implemented:
+  - `SongApi.climax` - CDN server rejects requests
+  - `SongApi.rankingFilter` - Parameter error
+  - `SceneApi.listsV2` - Server returns HTML
+- CookieJar does not include file persistence, users should save `serialize()` output themselves
 
-## 免责声明
+## Disclaimer
 
-> 1. 本项目仅供学习使用，请尊重版权，请勿利用此项目从事商业行为及非法用途!
-> 2. 使用本项目的过程中可能会产生版权数据。对于这些版权数据，本项目不拥有它们的所有权。为了避免侵权，使用者务必在 24 小时内清除使用本项目的过程中所产生的版权数据。
-> 3. 由于使用本项目产生的包括由于本协议或由于使用或无法使用本项目而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害（包括但不限于因商誉损失、停工、计算机故障或故障引起的损害赔偿，或任何及所有其他商业损害或损失）由使用者负责。
-> 4. **禁止在违反当地法律法规的情况下使用本项目。** 对于使用者在明知或不知当地法律法规不允许的情况下使用本项目所造成的任何违法违规行为由使用者承担，本项目不承担由此造成的任何直接、间接、特殊、偶然或结果性责任。
-> 5. 音乐平台不易，请尊重版权，支持正版。
-> 6. 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作及捐赠。
-> 7. 如果官方音乐平台觉得本项目不妥，可联系本项目更改或移除。
+> 1. This project is for learning purposes only. Please respect copyright and do not use this project for commercial or illegal purposes!
+> 2. This project may generate copyrighted data during use. The project does not own the copyright of such data. To avoid infringement, users must clear any copyrighted data generated within 24 hours.
+> 3. The user is responsible for any direct, indirect, special, incidental, or consequential damages arising from the use of this project.
+> 4. **Do not use this project in violation of local laws and regulations.** The user bears full responsibility for any violations.
+> 5. Music platforms work hard - please respect copyright and support legitimate sources.
+> 6. This project is for technical feasibility exploration only and does not accept any commercial cooperation or donations.
+> 7. If the official music platform finds this project inappropriate, please contact to have it modified or removed.
 
 ## License
 
