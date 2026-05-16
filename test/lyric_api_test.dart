@@ -73,13 +73,12 @@ void main() {
       );
 
       expect(capturedRequest.url.toString(), contains('/search'));
-      expect(capturedRequest.url.toString(), contains('keyword=hello'));
-      expect(capturedRequest.url.toString(), contains('duration=300'));
-      expect(capturedRequest.url.toString(), contains('hash=hash123'));
       expect(
         capturedRequest.url.toString(),
-        contains('client=mobi'),
+        contains('keyword=hello'),
       );
+      expect(capturedRequest.url.toString(), contains('duration=300'));
+      expect(capturedRequest.url.toString(), contains('hash=hash123'));
       expect(capturedRequest.url.toString(), contains('lyrics.kugou.com'));
 
       expect(result, isA<LyricSearchResult>());
@@ -108,10 +107,6 @@ void main() {
       await lyricApi.search(keyword: 'test');
 
       expect(capturedRequest.url.toString(), contains('keyword=test'));
-      expect(
-        capturedRequest.url.toString(),
-        contains('client=mobi'),
-      );
 
       httpClient.close();
     });

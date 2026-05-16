@@ -102,12 +102,12 @@ void main() {
 
       expect(fakeClient.calls.length, equals(1));
       final call = fakeClient.calls.first;
-      expect(call.path, equals('/api/v3/search/song'));
+      expect(call.path, equals('/v3/search/song'));
       expect(call.params!['keyword'], equals('周杰伦'));
       expect(call.params!['page'], equals(2));
       expect(call.params!['pagesize'], equals(20));
-      expect(call.baseURL, equals('http://mobilecdn.kugou.com'));
-      expect(call.notSignature, isTrue);
+      expect(call.router, equals('complexsearch.kugou.com'));
+      expect(call.encryptType, equals(EncryptType.android));
     });
 
     test('songs 使用默认分页参数', () async {
@@ -243,9 +243,9 @@ void main() {
       await searchApi.playlists(keyword: 'test');
 
       final call = fakeClient.calls.first;
-      expect(call.path, equals('/api/v3/search/special'));
-      expect(call.baseURL, equals('http://mobilecdn.kugou.com'));
-      expect(call.notSignature, isTrue);
+      expect(call.path, equals('/v1/search/special'));
+      expect(call.router, equals('complexsearch.kugou.com'));
+      expect(call.encryptType, equals(EncryptType.android));
     });
 
     test('albums 使用正确的路径', () async {
@@ -254,9 +254,9 @@ void main() {
       await searchApi.albums(keyword: 'test');
 
       final call = fakeClient.calls.first;
-      expect(call.path, equals('/api/v3/search/album'));
-      expect(call.baseURL, equals('http://mobilecdn.kugou.com'));
-      expect(call.notSignature, isTrue);
+      expect(call.path, equals('/v1/search/album'));
+      expect(call.router, equals('complexsearch.kugou.com'));
+      expect(call.encryptType, equals(EncryptType.android));
     });
 
     test('lyrics 使用正确的路径', () async {
@@ -286,37 +286,28 @@ void main() {
       expect(result.total, equals(15));
 
       expect(fakeClient.calls.length, equals(2));
-      expect(fakeClient.calls[0].path, equals('/api/v3/search/song'));
+      expect(fakeClient.calls[0].path, equals('/v3/search/song'));
       expect(fakeClient.calls[0].params!['keyword'], equals('test'));
       expect(fakeClient.calls[0].params!['pagesize'], equals(5));
-      expect(fakeClient.calls[0].baseURL, equals('http://mobilecdn.kugou.com'));
-      expect(fakeClient.calls[0].notSignature, isTrue);
+      expect(fakeClient.calls[0].router, equals('complexsearch.kugou.com'));
+      expect(fakeClient.calls[0].encryptType, equals(EncryptType.android));
 
-      expect(fakeClient.calls[1].path, equals('/api/v3/search/album'));
+      expect(fakeClient.calls[1].path, equals('/v1/search/album'));
       expect(fakeClient.calls[1].params!['keyword'], equals('test'));
       expect(fakeClient.calls[1].params!['pagesize'], equals(5));
-      expect(fakeClient.calls[1].baseURL, equals('http://mobilecdn.kugou.com'));
-      expect(fakeClient.calls[1].notSignature, isTrue);
+      expect(fakeClient.calls[1].router, equals('complexsearch.kugou.com'));
+      expect(fakeClient.calls[1].encryptType, equals(EncryptType.android));
     });
 
-    test('所有搜索方法使用 notSignature: true', () async {
-      fakeClient.stubResponse({'info': [], 'total': 0});
-      fakeClient.stubResponse({'playlists': [], 'total': 0});
-      fakeClient.stubResponse({'albums': [], 'total': 0});
+    test('lyrics 使用 mobilecdn 且 notSignature', () async {
       fakeClient.stubResponse({'total': 0});
-      fakeClient.stubResponse({'info': [], 'total': 0});
-      fakeClient.stubResponse({'albums': [], 'total': 0});
 
-      await searchApi.songs(keyword: 't');
-      await searchApi.playlists(keyword: 't');
-      await searchApi.albums(keyword: 't');
       await searchApi.lyrics(keyword: 't');
-      await searchApi.mixed(keyword: 't');
 
-      for (final call in fakeClient.calls) {
-        expect(call.notSignature, isTrue);
-        expect(call.baseURL, equals('http://mobilecdn.kugou.com'));
-      }
+      final call = fakeClient.calls.first;
+      expect(call.path, equals('/api/v3/search/lyric'));
+      expect(call.baseURL, equals('http://mobilecdn.kugou.com'));
+      expect(call.notSignature, isTrue);
     });
   });
 }

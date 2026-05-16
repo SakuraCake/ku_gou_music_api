@@ -178,7 +178,7 @@ void main() {
 
         await songApi.url(hash: 'testhash', quality: AudioQuality.lossless);
 
-        expect(capturedQuality, equals('999'));
+        expect(capturedQuality, equals('flac'));
 
         httpClient.close();
       });
