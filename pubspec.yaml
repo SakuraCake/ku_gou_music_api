@@ -1,6 +1,12 @@
 name: kugou_api
-description: "A Dart package for KuGou Music API"
+description: "A comprehensive Dart package for KuGou Music API with full API coverage, authentication, caching, and more."
 version: 0.0.1
+repository: https://github.com/SakuraCake/ku_gou_music_api
+topics:
+  - music
+  - api
+  - kugou
+  - audio
 
 environment:
   sdk: ^3.11.4
