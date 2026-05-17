@@ -43,6 +43,9 @@ class FmApi extends BaseApi {
     int type = 2,
     int offset = -1,
     int size = 20,
+    String? fmtype,
+    String? fmoffset,
+    String? fmsize,
   }) async {
     final dateTime = DateTime.now().millisecondsSinceEpoch;
     final key = signParams(
@@ -51,13 +54,20 @@ class FmApi extends BaseApi {
       clientver: client.httpClient.config.clientver,
       isLite: client.httpClient.config.isLite,
     );
-    final fmData = fmId.split(',').map((s) => {
-      'fmid': s,
-      'fmtype': type,
-      'offset': offset,
-      'size': size,
-      'singername': '',
-    }).toList();
+    final fmtypeList = fmtype?.split(',');
+    final fmoffsetList = fmoffset?.split(',');
+    final fmsizeList = fmsize?.split(',');
+    final fmIds = fmId.split(',');
+    final fmData = <Map<String, dynamic>>[];
+    for (var i = 0; i < fmIds.length; i++) {
+      fmData.add({
+        'fmid': fmIds[i],
+        'fmtype': fmtypeList != null && i < fmtypeList.length ? int.tryParse(fmtypeList[i]) ?? type : type,
+        'offset': fmoffsetList != null && i < fmoffsetList.length ? int.tryParse(fmoffsetList[i]) ?? offset : offset,
+        'size': fmsizeList != null && i < fmsizeList.length ? int.tryParse(fmsizeList[i]) ?? size : size,
+        'singername': '',
+      });
+    }
     return client.post<FmSongResult>(
       '/v1/app_song_list_offset',
       body: {
@@ -103,6 +113,7 @@ class FmApi extends BaseApi {
     String platform = 'ios',
     String mode = 'normal',
     bool isOverplay = false,
+    int? vipType,
   }) async {
     final dateTime = DateTime.now().millisecondsSinceEpoch;
     final key = signParams(
@@ -139,12 +150,58 @@ class FmApi extends BaseApi {
     if (hash != null) dataMap['hash'] = hash;
     if (songId != null) dataMap['songid'] = songId;
     if (playtime != null) dataMap['playtime'] = playtime;
+    if (vipType != null) dataMap['vip_type'] = vipType;
     return client.post<PersonalFmResult>(
       '/v2/personal_recommend',
       body: dataMap,
       router: 'persnfm.service.kugou.com',
       encryptType: EncryptType.android,
       fromJson: (json) => PersonalFmResult.fromJson(json),
+    );
+  }
+
+  Future<Map<String, dynamic>> recommend() async {
+    final dateTime = DateTime.now().millisecondsSinceEpoch;
+    return client.post<Map<String, dynamic>>(
+      '/v1/rcmd_list',
+      body: {
+        'appid': client.httpClient.config.appid,
+        'clientver': client.httpClient.config.clientver,
+        'clienttime': dateTime,
+        'mid': client.httpClient.mid,
+        'key': signParamsKey(dateTime),
+        'rcmdsongcount': 1,
+        'level': 0,
+        'area_code': 1,
+        'get_tracker': 1,
+        'uid': 0,
+      },
+      router: 'fm.service.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> image({required String fmId}) async {
+    final dateTime = DateTime.now().millisecondsSinceEpoch;
+    final fmData = fmId.split(',').map((s) => {
+      'fields': 'imgUrl100,imgUrl50',
+      'fmid': s,
+      'fmtype': 2,
+    }).toList();
+    return client.post<Map<String, dynamic>>(
+      '/v1/fm_info',
+      body: {
+        'appid': client.httpClient.config.appid,
+        'clienttime': dateTime,
+        'clientver': client.httpClient.config.clientver,
+        'data': fmData,
+        'dfid': client.httpClient.dfid,
+        'key': signParamsKey(dateTime),
+        'mid': client.httpClient.mid,
+      },
+      router: 'fm.service.kugou.com',
+      headers: {'Content-Type': 'application/json'},
+      encryptType: EncryptType.android,
     );
   }
 }

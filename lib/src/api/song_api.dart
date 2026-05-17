@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../client/base_api.dart';
 import '../client/http_client.dart';
 import '../config/constants.dart';
@@ -237,5 +239,32 @@ class SongApi extends BaseApi {
     if (value is int) return value;
     if (value is String) return int.tryParse(value);
     return null;
+  }
+
+  Future<Map<String, dynamic>> climax({required String hash}) async {
+    final data = jsonEncode(hash.split(',').map((s) => {'hash': s}).toList());
+    return client.get<Map<String, dynamic>>(
+      '/v1/audio_climax/audio',
+      params: {'data': data},
+      baseURL: 'https://expendablekmrcdn.kugou.com',
+      encryptType: EncryptType.android,
+      notSignature: true,
+    );
+  }
+
+  Future<Map<String, dynamic>> rankingFilter({
+    required int albumAudioId,
+    int page = 1,
+    int pagesize = 30,
+  }) async {
+    return client.get<Map<String, dynamic>>(
+      '/grow/v1/song_ranking/unlock/v2/ranking_filter',
+      params: {
+        'album_audio_id': albumAudioId,
+        'page': page,
+        'pagesize': pagesize,
+      },
+      encryptType: EncryptType.android,
+    );
   }
 }

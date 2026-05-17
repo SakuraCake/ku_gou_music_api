@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import '../client/base_api.dart';
 import '../client/http_client.dart';
 import '../config/constants.dart';
 import '../crypto/aes.dart';
+import '../crypto/md5.dart';
 import '../crypto/rsa.dart';
 import '../crypto/signature.dart';
 import '../exception.dart';
@@ -264,15 +267,16 @@ class LoginApi extends BaseApi {
       String? token;
       int? userId;
 
+      userId = (data?['userid'] as num?)?.toInt();
+
       if (secuParams != null) {
         final decrypted = cryptoAesDecrypt(secuParams, encrypt['key']!);
         if (decrypted is Map<String, dynamic>) {
           token = decrypted['token'] as String?;
-          userId = (decrypted['userid'] as num?)?.toInt();
+          userId = (decrypted['userid'] as num?)?.toInt() ?? userId;
         }
       } else {
         token = data?['token'] as String?;
-        userId = (data?['userid'] as num?)?.toInt();
       }
 
       if (token != null) {
@@ -375,15 +379,16 @@ class LoginApi extends BaseApi {
       String? newToken;
       int? newUserId;
 
+      newUserId = (data?['userid'] as num?)?.toInt();
+
       if (secuParams != null) {
         final decrypted = cryptoAesDecrypt(secuParams, encryptParams['key']!);
         if (decrypted is Map<String, dynamic>) {
           newToken = decrypted['token'] as String?;
-          newUserId = (decrypted['userid'] as num?)?.toInt();
+          newUserId = (decrypted['userid'] as num?)?.toInt() ?? newUserId;
         }
       } else {
         newToken = data?['token'] as String?;
-        newUserId = (data?['userid'] as num?)?.toInt();
       }
 
       if (newToken != null) {
@@ -414,8 +419,9 @@ class LoginApi extends BaseApi {
   /// 可通过 [qrInfo] 获取二维码信息（含 base64 图片）。
   Stream<QrCodeState> qrCodeStream({
     Duration interval = const Duration(seconds: 3),
+    bool qrimg = false,
   }) async* {
-    _qrInfo = await _getQrCode();
+    _qrInfo = await _getQrCode(qrimg: qrimg);
     if (_qrInfo == null) {
       yield QrCodeState.error;
       return;
@@ -441,19 +447,22 @@ class LoginApi extends BaseApi {
   /// 获取当前二维码信息
   QrCodeInfo? get qrInfo => _qrInfo;
 
-  Future<QrCodeInfo?> _getQrCode() async {
+  Future<QrCodeInfo?> _getQrCode({bool qrimg = false}) async {
     try {
+      final params = {
+        'appid': 1001,
+        'type': 1,
+        'plat': 4,
+        'qrcode_txt':
+            'https://h5.kugou.com/apps/loginQRCode/html/index.html?appid=${client.httpClient.config.appid}&',
+        'srcappid': kSrcAppid,
+      };
+      if (qrimg) {
+        params['qrimg'] = 1;
+      }
       final result = await client.get<Map<String, dynamic>>(
         '/v2/qrcode',
-        params: {
-          'appid': 1001,
-          'type': 1,
-          'plat': 4,
-          'qrimg': 1,
-          'qrcode_txt':
-              'https://h5.kugou.com/apps/loginQRCode/html/index.html?appid=${client.httpClient.config.appid}&',
-          'srcappid': kSrcAppid,
-        },
+        params: params,
         baseURL: 'https://login-user.kugou.com',
         encryptType: EncryptType.web,
       );
@@ -470,6 +479,217 @@ class LoginApi extends BaseApi {
     } catch (_) {
       return null;
     }
+  }
+
+  Future<Map<String, dynamic>> deviceLogin() async {
+    final clienttimeMs = DateTime.now().millisecondsSinceEpoch;
+    final currentToken = token;
+    final currentUserId = userid ?? 0;
+
+    final aesResult = cryptoAesEncrypt({'token': currentToken});
+    final pk = cryptoRSAEncrypt(
+      jsonEncode({'clienttime_ms': clienttimeMs, 'key': aesResult['key']}),
+      publicKey: client.httpClient.config.rsaPublicKey,
+    ).toUpperCase();
+
+    return client.post<Map<String, dynamic>>(
+      '/v2/get_dev',
+      body: {
+        'plat': 1,
+        'userid': currentUserId,
+        'clienttime_ms': clienttimeMs,
+        'pk': pk,
+        'params': aesResult['str'],
+      },
+      baseURL: 'https://userinfoservice.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> deviceKick({
+    required String tMid,
+    required String guid,
+  }) async {
+    final dateTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final isLite = client.httpClient.config.isLite;
+
+    return client.get<Map<String, dynamic>>(
+      '/loginservice/v1/dev_logout',
+      params: {
+        'appid': client.httpClient.config.appid,
+        'clientver': client.httpClient.config.clientver,
+        'clienttime': dateTime,
+        'mid': client.httpClient.mid,
+        'uuid': client.httpClient.uuid,
+        'dfid': client.httpClient.dfid,
+        'plat': 1,
+        'userid': userid ?? 0,
+        'token': token ?? '',
+        't_mid': tMid,
+        't': guid,
+        't_appid': kLiteAppid,
+        't_clientver': 10597,
+        'srcappid': kSrcAppid,
+        'signature': signParamsKey(dateTime, isLite: isLite),
+      },
+      headers: {
+        'Host': 'gateway.kugou.com',
+      },
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> openplatLogin({required String code}) async {
+    final isLite = client.httpClient.config.isLite;
+    final wxAppid = isLite ? kWxLiteAppid : kWxAppid;
+    final wxSecret = isLite ? kWxLiteSecret : kWxSecret;
+
+    final tokenResponse = await http.Client().get(
+      Uri.parse(
+        'https://api.weixin.qq.com/sns/oauth2/access_token?appid=$wxAppid&secret=$wxSecret&code=$code&grant_type=authorization_code',
+      ),
+    );
+    final tokenData = jsonDecode(tokenResponse.body) as Map<String, dynamic>;
+    final accessToken = tokenData['access_token'] as String?;
+    final openid = tokenData['openid'] as String?;
+
+    if (accessToken == null || openid == null) {
+      return {'error': 'failed to get wechat access_token', 'data': tokenData};
+    }
+
+    final clienttimeMs = DateTime.now().millisecondsSinceEpoch;
+
+    final aesResult = cryptoAesEncrypt({'access_token': accessToken});
+    final pk = cryptoRSAEncrypt(
+      jsonEncode({'clienttime_ms': clienttimeMs, 'key': aesResult['key']}),
+      publicKey: client.httpClient.config.rsaPublicKey,
+    ).toUpperCase();
+
+    dynamic t1 = 0;
+    dynamic t2 = 0;
+    if (isLite) {
+      final guid = generateGuid();
+      final mac = '00:00:00:00:00:00';
+      final dev = 'android$clienttimeMs';
+      t2 = cryptoAesEncrypt(
+        '$guid|0f607264fc6318a92b9e13c65db7cd3c|$mac|$dev|$clienttimeMs',
+        key: kLiteLoginT2Key,
+        iv: kLiteLoginT2Iv,
+      );
+      t1 = cryptoAesEncrypt(
+        '|$clienttimeMs',
+        key: kLiteLoginT1Key,
+        iv: kLiteLoginT1Iv,
+      );
+    }
+
+    final result = await client.post<Map<String, dynamic>>(
+      '/v6/login_by_openplat',
+      body: {
+        'dev': 'android$clienttimeMs',
+        'force_login': 1,
+        'partnerid': 36,
+        'clienttime_ms': clienttimeMs,
+        't1': t1,
+        't2': t2,
+        't3': kStandardLoginT3,
+        'openid': openid,
+        'params': aesResult['str'],
+        'pk': pk,
+      },
+      router: 'login.user.kugou.com',
+      encryptType: EncryptType.android,
+    );
+
+    final data = result['data'] as Map<String, dynamic>?;
+    final secuParams = data?['secu_params'] as String?;
+
+    String? newToken;
+    int? newUserId;
+
+    if (secuParams != null) {
+      final decrypted = cryptoAesDecrypt(secuParams, aesResult['key']!);
+      if (decrypted is Map<String, dynamic>) {
+        newToken = decrypted['token'] as String?;
+        newUserId = (decrypted['userid'] as num?)?.toInt();
+      }
+    } else {
+      newToken = data?['token'] as String?;
+      newUserId = (data?['userid'] as num?)?.toInt();
+    }
+
+    if (newToken != null) {
+      _token = newToken;
+      _userid = newUserId;
+      client.httpClient.token = newToken;
+      client.httpClient.userid = newUserId;
+    }
+
+    return result;
+  }
+
+  Future<Map<String, dynamic>> wxCreate() async {
+    final isLite = client.httpClient.config.isLite;
+    final wxAppid = isLite ? kWxLiteAppid : kWxAppid;
+    final wxSecret = isLite ? kWxLiteSecret : kWxSecret;
+
+    final tokenResponse = await http.Client().get(
+      Uri.parse(
+        'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$wxAppid&secret=$wxSecret',
+      ),
+    );
+    final tokenData = jsonDecode(tokenResponse.body) as Map<String, dynamic>;
+    final accessToken = tokenData['access_token'] as String?;
+
+    if (accessToken == null) {
+      return {'error': 'failed to get wechat access_token', 'data': tokenData};
+    }
+
+    final ticketResponse = await http.Client().get(
+      Uri.parse(
+        'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=$accessToken&type=jsapi',
+      ),
+    );
+    final ticketData = jsonDecode(ticketResponse.body) as Map<String, dynamic>;
+    final ticket = ticketData['ticket'] as String?;
+
+    if (ticket == null) {
+      return {'error': 'failed to get wechat ticket', 'data': ticketData};
+    }
+
+    final noncestr = randomString(16);
+    final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final url = 'https://long.open.weixin.qq.com/connect/l/qrconnect?f=json';
+    final signature = cryptoSha1(
+      'jsapi_ticket=$ticket&noncestr=$noncestr&timestamp=$timestamp&url=$url',
+    );
+
+    final qrResponse = await http.Client().get(
+      Uri.parse(
+        'https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&appid=$wxAppid',
+      ),
+    );
+    final qrData = jsonDecode(qrResponse.body) as Map<String, dynamic>;
+    final uuid = qrData['uuid'] as String?;
+    final qrcodeurl = uuid != null
+        ? 'https://long.open.weixin.qq.com/connect/l/qrconnect?uuid=$uuid'
+        : null;
+
+    return {
+      'appid': wxAppid,
+      'noncestr': noncestr,
+      'timestamp': timestamp,
+      'scope': 'snsapi_login',
+      'signature': signature,
+      'qrcodeurl': qrcodeurl,
+    };
+  }
+
+  Future<Map<String, dynamic>> wxCheck({required String uuid}) async {
+    final response = await http.Client().get(
+      Uri.parse('https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=$uuid'),
+    );
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   Future<QrCodeState> _checkQrCodeState(QrCodeInfo qrInfo) async {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:pointycastle/digests/md5.dart';
+import 'package:pointycastle/digests/sha1.dart';
 
 /// 计算数据的 MD5 哈希值。
 ///
@@ -13,5 +14,15 @@ String cryptoMd5(dynamic data) {
   md5.update(bytes, 0, bytes.length);
   final out = Uint8List(md5.digestSize);
   md5.doFinal(out, 0);
+  return out.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+}
+
+String cryptoSha1(dynamic data) {
+  final input = data is String ? data : jsonEncode(data);
+  final bytes = utf8.encode(input);
+  final sha1 = SHA1Digest();
+  sha1.update(bytes, 0, bytes.length);
+  final out = Uint8List(sha1.digestSize);
+  sha1.doFinal(out, 0);
   return out.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
 }

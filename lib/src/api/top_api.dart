@@ -45,11 +45,11 @@ class TopApi extends BaseApi {
   }
 
   /// 获取青春版推荐卡片内容，[cardId] 为卡片 ID，[pagesize] 为每页数量
-  Future<TopCardYouthResult> cardYouth({int cardId = 3005, int pagesize = 30}) async {
+  Future<TopCardYouthResult> cardYouth({int cardId = 3005, int pagesize = 30, String? tagId}) async {
     return client.post<TopCardYouthResult>(
       '/youth/v1/song/single_card_recommend',
       body: {
-        'tagid': '',
+        'tagid': tagId ?? '',
         'u_info': '',
         'source_mixsong': '',
       },

@@ -30,6 +30,18 @@ String cryptoRSAEncrypt(String data, {String? publicKey}) {
   return encrypted.toRadixString(16).padLeft(keyLength * 2, '0');
 }
 
+String rsaEncrypt2(dynamic data, {String? publicKey, bool isLite = false}) {
+  final effectiveKey = publicKey ?? (isLite ? kLiteRsaPublicKey : kStandardRsaPublicKey);
+  final key = _parseRsaPublicKey(effectiveKey);
+  final input = data is String ? utf8.encode(data) : utf8.encode(jsonEncode(data));
+
+  final encryptor = PKCS1Encoding(RSAEngine())
+    ..init(true, PublicKeyParameter<RSAPublicKey>(key));
+  final output = encryptor.process(Uint8List.fromList(input));
+
+  return output.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+}
+
 RSAPublicKey _parseRsaPublicKey(String base64Key) {
   final bytes = base64Decode(base64Key);
   var offset = 0;

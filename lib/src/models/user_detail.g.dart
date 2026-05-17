@@ -40,17 +40,14 @@ Map<String, dynamic> _$UserDetailResultToJson(UserDetailResult instance) =>
 
 UserPlaylistResult _$UserPlaylistResultFromJson(Map<String, dynamic> json) =>
     UserPlaylistResult(
-      list: (json['list'] as List<dynamic>?)
+      list: (json['info'] as List<dynamic>?)
           ?.map((e) => PlaylistInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalCount: _parseInt(json['total_count']),
+      totalCount: _parseInt(json['list_count']),
     );
 
 Map<String, dynamic> _$UserPlaylistResultToJson(UserPlaylistResult instance) =>
-    <String, dynamic>{
-      'list': instance.list,
-      'total_count': instance.totalCount,
-    };
+    <String, dynamic>{'info': instance.list, 'list_count': instance.totalCount};
 
 UserHistoryResult _$UserHistoryResultFromJson(Map<String, dynamic> json) =>
     UserHistoryResult(

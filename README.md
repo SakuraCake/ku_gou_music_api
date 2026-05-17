@@ -14,7 +14,7 @@ Inspired by [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node
 
 ```yaml
 dependencies:
-  kugou_api: ^0.0.5
+  kugou_api: ^0.1.0
 ```
 
 Or:
@@ -182,11 +182,13 @@ try {
 - [x] Search albums (`search.albums`)
 - [x] Search lyrics (`search.lyrics`)
 - [x] Mixed search (`search.mixed`)
+- [x] Mixed search v2 (`search.mixedSearch`)
 - [x] Hot search list (`search.hotDetail`)
+- [x] Hot search tabs (`search.hotTab`)
 - [x] Search suggestions (`search.suggest`)
+- [x] Search suggestions v2 (`search.suggestV2`)
 - [x] Default search keyword (`search.defaultWord`)
 - [x] Complex search (`search.complex`)
-- [ ] Mixed search (`search_mixed`)
 - [ ] Lyric search (`search_lyric`)
 
 ### Song
@@ -194,8 +196,8 @@ try {
 - [x] Get song URL (`song.url`)
 - [x] Get song detail (`song.detail`)
 - [x] Song ranking (`song.ranking`)
-- [ ] Song climax (`song.climax`)
-- [ ] Song ranking filter (`song.rankingFilter`)
+- [x] Song climax (`song.climax`)
+- [x] Song ranking filter (`song.rankingFilter`)
 - [ ] Get song URL (new) (`song_url_new`)
 
 ### Lyric
@@ -209,21 +211,20 @@ try {
 - [x] Send captcha (`login.sendCaptcha`)
 - [x] Captcha login (`login.byCaptcha`)
 - [x] QR code login (`login.qrCodeStream`)
-- [ ] Phone login (`login_cellphone`)
-- [ ] Device login (`login_device`)
-- [ ] Device kick (`login_device_kick`)
-- [ ] Open platform login (`login_openplat`)
+- [x] Device login (`login.deviceLogin`)
+- [x] Device kick (`login.deviceKick`)
+- [x] Open platform login (`login.openplatLogin`)
 - [ ] Token login (`login_token`)
-- [ ] WeChat login check (`login_wx_check`)
-- [ ] WeChat login create (`login_wx_create`)
+- [x] WeChat login create (`login.wxCreate`)
+- [x] WeChat login check (`login.wxCheck`)
 
 ### Ranking
 
 - [x] Ranking list (`rank.list`)
 - [x] Ranking info (`rank.info`)
-- [ ] Ranking audio (`rank_audio`)
-- [ ] Ranking top (`rank_top`)
-- [ ] Ranking history (`rank_vol`)
+- [x] Ranking audio (`rank.audio`)
+- [x] Ranking top (`rank.top`)
+- [x] Ranking history (`rank.vol`)
 
 ### Playlist
 
@@ -236,16 +237,17 @@ try {
 - [x] Add tracks to playlist (`playlist.addTracks`)
 - [x] Remove tracks from playlist (`playlist.removeTracks`)
 - [x] Delete playlist (`playlist.delete`)
-- [ ] Playlist effect (`playlist_effect`)
+- [x] Playlist effect (`playlist.effect`)
 - [ ] Get all playlist tracks (`playlist_track_all`)
-- [ ] Get all playlist tracks (new) (`playlist_track_all_new`)
+- [x] Get all playlist tracks new (`playlist.trackAllNew`)
 
 ### Album
 
 - [x] Album detail (`album.detail`)
+- [x] Album old detail (`album.oldDetail`)
 - [x] New albums (`album.top`)
-- [ ] Album songs (`album_songs`)
-- [ ] Album shop (`album_shop`)
+- [x] Album songs (`album.songs`)
+- [x] Album shop (`album.shop`)
 
 ### Artist
 
@@ -255,18 +257,18 @@ try {
 - [x] Get artist list (`artist.list`)
 - [x] Follow artist (`artist.follow`)
 - [x] Unfollow artist (`artist.unfollow`)
-- [ ] Get artist MVs (`artist_videos`)
-- [ ] Get followed artist new songs (`artist_follow_newsongs`)
-- [ ] Get artist honors (`artist_honour`)
+- [x] Get artist MVs (`artist.videos`)
+- [x] Get followed artist new songs (`artist.followNewSongs`)
+- [x] Get artist honors (`artist.honour`)
 
 ### Recommend
 
 - [x] Daily recommend (`recommend.everyday`)
 - [x] AI recommend (`recommend.ai`)
 - [x] New songs (`recommend.newSongs`)
-- [ ] Daily recommend friends (`everyday_friend`)
-- [ ] History recommend (`everyday_history`)
-- [ ] Style recommend (`everyday_style_recommend`)
+- [x] Daily recommend friends (`recommend.everydayFriend`)
+- [x] History recommend (`recommend.everydayHistory`)
+- [x] Style recommend (`recommend.everydayStyleRecommend`)
 
 ### Comment
 
@@ -288,20 +290,20 @@ try {
 - [x] Follow artist (`user.follow`)
 - [x] Submit listening history (`user.uploadHistory`)
 - [x] Listening time report (`user.listenTimeAdd`)
-- [ ] User follow messages (`user_follow_message`)
-- [ ] User listening ranking (`user_listen`)
-- [ ] User cloud (`user_cloud`)
-- [ ] User cloud URL (`user_cloud_url`)
-- [ ] User video favorites (`user_video_collect`)
-- [ ] User video likes (`user_video_love`)
+- [x] User follow messages (`user.followMessage`)
+- [x] User listening ranking (`user.listen`)
+- [x] User cloud (`user.cloud`)
+- [x] User cloud URL (`user.cloudUrl`)
+- [x] User video favorites (`user.videoCollect`)
+- [x] User video likes (`user.videoLove`)
 
 ### FM
 
 - [x] FM categories (`fm.classes`)
 - [x] FM songs (`fm.songs`)
 - [x] Personal FM (`fm.personal`)
-- [ ] FM recommend (`fm_recommend`)
-- [ ] FM image (`fm_image`)
+- [x] FM recommend (`fm.recommend`)
+- [x] FM image (`fm.image`)
 
 ### IP Zone
 
@@ -344,13 +346,13 @@ try {
 - [x] Get video detail (`video.detail`)
 - [x] Get video privilege (`video.privilege`)
 - [x] Get video URL (`video.url`)
-- [ ] Get song MV (`kmr_audio_mv`)
-- [ ] Get audio MV (`krm_audio`)
+- [x] Get song MV (`video.audioMv`)
+- [x] Get audio MV detail (`video.audioDetail`)
 
 ### Scene
 
 - [x] Scene music list (`scene.lists`)
-- [ ] Scene music list V2 (`scene.listsV2`)
+- [x] Scene music list V2 (`scene.listsV2`)
 - [x] Get scene modules (`scene.module`)
 - [x] Get scene module info (`scene.moduleInfo`)
 - [x] Get scene music list (`scene.audioList`)
@@ -380,29 +382,29 @@ try {
 - [x] Get server time (`misc.serverNow`)
 - [x] Get privilege info (`misc.privilegeLite`)
 - [x] Shuffle recommend (`misc.brush`)
-- [ ] Register device (`register_dev`)
+- [x] Register device (`misc.registerDev`)
 - [ ] Send captcha (`captcha_sent`)
-- [ ] PC radio (`pc_diantai`)
+- [x] PC radio (`misc.pcDiantai`)
 - [ ] AI recommend (`ai_recommend`)
 
 ### Youth Channel
 
-- [ ] Get all user channels (`youth_channel_all`)
-- [ ] Channel recommend (`youth_channel_amway`)
-- [ ] Channel detail (`youth_channel_detail`)
-- [ ] Similar channels (`youth_channel_similar`)
-- [ ] Channel subscribe (`youth_channel_sub`)
-- [ ] Channel music story (`youth_channel_song`)
-- [ ] Channel music story detail (`youth_channel_song_detail`)
-- [ ] Claim VIP (`youth_day_vip`)
-- [ ] VIP upgrade (`youth_day_vip_upgrade`)
-- [ ] Dynamic (`youth_dynamic`)
-- [ ] Recent dynamic (`youth_dynamic_recent`)
-- [ ] Listen song (`youth_listen_song`)
-- [ ] Monthly VIP record (`youth_month_vip_record`)
-- [ ] Union VIP (`youth_union_vip`)
-- [ ] VIP (`youth_vip`)
-- [ ] User song (`youth_user_song`)
+- [x] Get all user channels (`youth.channelAll`)
+- [x] Channel recommend (`youth.channelAmway`)
+- [x] Channel detail (`youth.channelDetail`)
+- [x] Similar channels (`youth.channelSimilar`)
+- [x] Channel subscribe (`youth.channelSubscribe`)
+- [x] Channel music story (`youth.channelSong`)
+- [x] Channel music story detail (`youth.channelSongDetail`)
+- [x] Claim VIP (`youth.dayVip`)
+- [x] VIP upgrade (`youth.dayVipUpgrade`)
+- [x] Dynamic (`youth.dynamic$`)
+- [x] Recent dynamic (`youth.dynamicRecent`)
+- [x] Listen song (`youth.listenSong`)
+- [x] Monthly VIP record (`youth.monthVipRecord`)
+- [x] Union VIP (`youth.unionVip`)
+- [x] VIP (`youth.vip`)
+- [x] User song (`youth.userSong`)
 
 ### Audio Extension
 
@@ -412,21 +414,20 @@ try {
 
 ## Signature Algorithm
 
-This library includes three KuGou API signature algorithms:
+This library includes six KuGou API signature/encryption algorithms:
 
 - **Android Signature** - Default algorithm using Android client salt
 - **Web Signature** - Web algorithm for QR code login etc.
 - **Register Signature** - Register-specific algorithm
+- **Playlist AES Encrypt/Decrypt** - AES-CBC with 6-char random key, base64 I/O
+- **RSA Encrypt 2** - RSA with PKCS1 v1.5 padding
+- **SHA1 Hash** - SHA1 hash function
 
 POST request signatures automatically include the request body (JSON encoded) in the signature calculation.
 
 ## Known Limitations
 
 - Some endpoints require login (e.g., `IpApi.zoneHome`), use `CookieJar` to pass initial cookies or login first
-- The following endpoints have server issues and are not implemented:
-  - `SongApi.climax` - CDN server rejects requests
-  - `SongApi.rankingFilter` - Parameter error
-  - `SceneApi.listsV2` - Server returns HTML
 - CookieJar does not include file persistence, users should save `serialize()` output themselves
 
 ## Disclaimer

@@ -78,3 +78,10 @@ const String kLoginBaseUrl = 'https://loginserviceretry.kugou.com';
 
 /// 用户登录服务基础 URL。
 const String kUserLoginBaseUrl = 'https://login-user.kugou.com';
+
+const String kWxAppid = 'wx79f2c4418704b4f8';
+const String kWxSecret = '4efcab88b700769e376e3f6087b8abc9';
+const String kWxLiteAppid = 'wx72b795aca60ad321';
+const String kWxLiteSecret = '33e486041e5e25729a4e3d2da7502f9a';
+const String kAudioRelatedSalt = 'OIlwieks28dk2k092lksi2UIkp';
+const String kKtvSignSalt = '*s\u0026iN#G70*';

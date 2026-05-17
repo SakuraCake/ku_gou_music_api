@@ -72,10 +72,11 @@ class UserDetailResult {
 @JsonSerializable()
 class UserPlaylistResult {
   /// 歌单列表
+  @JsonKey(name: 'info')
   final List<PlaylistInfo>? list;
 
   /// 歌单总数
-  @JsonKey(name: 'total_count', fromJson: _parseInt)
+  @JsonKey(name: 'list_count', fromJson: _parseInt)
   final int? totalCount;
 
   /// Creates a new [UserPlaylistResult] instance.

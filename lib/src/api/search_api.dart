@@ -1,5 +1,6 @@
 import '../client/base_api.dart';
 import '../client/http_client.dart';
+import '../crypto/md5.dart';
 import '../models/search_result.dart';
 import '../models/song.dart';
 
@@ -193,16 +194,19 @@ class SearchApi extends BaseApi {
   }
 
   /// 获取搜索默认关键词
-  Future<SearchDefaultResult> defaultWord() async {
+  Future<SearchDefaultResult> defaultWord({int? vipType, int? mType}) async {
+    final body = <String, dynamic>{
+      'userid': client.httpClient.userid ?? 0,
+      'tags': [
+        {'id': 0, 'name': ''}
+      ],
+      'device': 'android',
+    };
+    if (vipType != null) body['vip_type'] = vipType;
+    if (mType != null) body['m_type'] = mType;
     return client.post<SearchDefaultResult>(
       '/searchnofocus/v1/search_no_focus_word',
-      body: {
-        'userid': client.httpClient.userid ?? 0,
-        'tags': [
-          {'id': 0, 'name': ''}
-        ],
-        'device': 'android',
-      },
+      body: body,
       encryptType: EncryptType.android,
       fromJson: (json) => SearchDefaultResult.fromJson(json),
     );
@@ -224,6 +228,80 @@ class SearchApi extends BaseApi {
       if ((result.total ?? 0) <= page * pageSize) break;
       page++;
     }
+  }
+
+  Future<Map<String, dynamic>> mixedSearch({required String keyword}) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final requestid = '${cryptoMd5('bdaa53d04e7475feb9024164a47032f9$timestamp')}_0';
+    return client.get<Map<String, dynamic>>(
+      '/v3/search/mixed',
+      params: {
+        'keyword': keyword,
+        'ab_tag': '',
+        'ability': 0,
+        'albumhide': 0,
+        'apiver': 20,
+        'area_code': 1,
+        'clientver': client.httpClient.config.clientver,
+        'cursor': 0,
+        'is_gpay': 0,
+        'iscorrection': 1,
+        'nocollect': 0,
+        'osversion': 'Android 13',
+        'platform': 'AndroidFilter',
+        'recver': 1,
+        'req_ai': 0,
+        'requestid': requestid,
+        'search_ability': 0,
+        'sec_aggre': 1,
+        'sec_aggre_bitmap': 0,
+        'style_type': 0,
+        'tag': '',
+      },
+      headers: {
+        'kg-clienttimems': timestamp.toString(),
+      },
+      router: 'complexsearch.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> suggestV2({
+    required String keyword,
+    int albumTipCount = 10,
+    int correctTipCount = 10,
+    int mvTipCount = 10,
+    int musicTipCount = 10,
+    int radiotip = 1,
+  }) async {
+    return client.get<Map<String, dynamic>>(
+      '/v2/getSearchTip',
+      params: {
+        'keyword': keyword,
+        'albumTipCount': albumTipCount,
+        'correctTipCount': correctTipCount,
+        'mvTipCount': mvTipCount,
+        'musicTipCount': musicTipCount,
+        'radiotip': radiotip,
+      },
+      router: 'searchtip.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> hotTab({
+    int navid = 1,
+    int plat = 2,
+  }) async {
+    return client.get<Map<String, dynamic>>(
+      '/api/v3/search/hot_tab',
+      params: {
+        'navid': navid,
+        'plat': plat,
+      },
+      router: 'msearch.kugou.com',
+      encryptType: EncryptType.android,
+    );
   }
 
   SearchResult _parseSearchResult(dynamic json, String keyword) {

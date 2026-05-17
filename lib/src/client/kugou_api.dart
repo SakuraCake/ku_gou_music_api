@@ -23,6 +23,7 @@ import '../api/scene_api.dart';
 import '../api/sheet_api.dart';
 import '../api/theme_api.dart';
 import '../api/misc_api.dart';
+import '../api/youth_api.dart';
 import '../config.dart';
 import '../util/logger.dart';
 import '../util/cache.dart';
@@ -110,6 +111,8 @@ class KuGouApi {
   /// 杂项接口。
   late final MiscApi misc;
 
+  late final YouthApi youth;
+
   /// Cookie 管理器，可读取或手动设置 Cookie。
   CookieJar get cookieJar => httpClient.cookieJar;
 
@@ -140,6 +143,7 @@ class KuGouApi {
     sheet = SheetApi(client);
     theme = ThemeApi(client);
     misc = MiscApi(client);
+    youth = YouthApi(client);
   }
 
   Timer? _refreshTimer;

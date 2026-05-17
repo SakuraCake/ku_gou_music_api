@@ -86,6 +86,50 @@ dynamic cryptoAesDecrypt(String data, String key, {String? iv}) {
   }
 }
 
+Map<String, String> playlistAesEncrypt(dynamic data) {
+  final input = data is String ? data : jsonEncode(data);
+  final key = _randomHexString(6).toLowerCase();
+  final md5Key = cryptoMd5(key);
+  final keyBytes = Uint8List.fromList(utf8.encode(md5Key.substring(0, 16)));
+  final ivBytes = Uint8List.fromList(utf8.encode(md5Key.substring(16, 32)));
+
+  final cipher =
+      PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))..init(
+        true,
+        PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+          ParametersWithIV<KeyParameter>(KeyParameter(keyBytes), ivBytes),
+          null,
+        ),
+      );
+  final inputBytes = utf8.encode(input);
+  final output = cipher.process(Uint8List.fromList(inputBytes));
+
+  return {'key': key, 'str': base64Encode(output)};
+}
+
+dynamic playlistAesDecrypt(String str, String key) {
+  final md5Key = cryptoMd5(key);
+  final keyBytes = Uint8List.fromList(utf8.encode(md5Key.substring(0, 16)));
+  final ivBytes = Uint8List.fromList(utf8.encode(md5Key.substring(16, 32)));
+
+  final dataBytes = base64Decode(str);
+  final cipher =
+      PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))..init(
+        false,
+        PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+          ParametersWithIV<KeyParameter>(KeyParameter(keyBytes), ivBytes),
+          null,
+        ),
+      );
+  final output = cipher.process(Uint8List.fromList(dataBytes));
+  final decrypted = utf8.decode(output);
+  try {
+    return jsonDecode(decrypted);
+  } catch (_) {
+    return decrypted;
+  }
+}
+
 String _randomHexString(int length) {
   final random = Random.secure();
   const chars = '0123456789abcdef';

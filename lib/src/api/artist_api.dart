@@ -170,4 +170,64 @@ class ArtistApi extends BaseApi {
       encryptType: EncryptType.android,
     );
   }
+
+  Future<Map<String, dynamic>> videos({
+    required int id,
+    String tag = 'all',
+    int page = 1,
+    int pagesize = 30,
+  }) async {
+    const tagMapping = <String, dynamic>{
+      'official': 18,
+      'live': 20,
+      'fan': 23,
+      'artist': 42419,
+      'all': '',
+    };
+    return client.get<Map<String, dynamic>>(
+      '/kmr/v1/author/videos',
+      params: {
+        'author_id': id,
+        'tag_idx': tagMapping[tag] ?? '',
+        'page': page,
+        'pagesize': pagesize,
+      },
+      baseURL: 'https://openapicdn.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> followNewSongs({
+    int lastAlbumId = 0,
+    int pagesize = 30,
+    int optSort = 1,
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/feed/v1/follow/newsong_album_list',
+      body: {'last_album_id': lastAlbumId},
+      params: {
+        'last_album_id': lastAlbumId,
+        'page_size': pagesize,
+        'opt_sort': optSort,
+      },
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> honour({
+    required int id,
+    int page = 1,
+    int pagesize = 30,
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/v1/query_singer_honour_detail',
+      params: {
+        'singer_id': id,
+        'pagesize': pagesize,
+        'page': page,
+      },
+      baseURL: 'http://h5activity.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
 }

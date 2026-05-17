@@ -69,4 +69,56 @@ class RecommendApi extends BaseApi {
       fromJson: NewSongResult.fromJson,
     );
   }
+
+  Future<Map<String, dynamic>> everydayFriend() async {
+    return client.post<Map<String, dynamic>>(
+      '/sing7/relation/json/v3/friend_rec_by_using_song_list',
+      body: {
+        'list': [
+          {'user_id': 853927886, 'mixsong_ids': []}
+        ],
+      },
+      params: {
+        'channel': 130,
+        'isteen': 0,
+        'platform': 2,
+        'usemkv': 1,
+      },
+      headers: {'pid': '126556797'},
+      baseURL: 'https://acsing.service.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> everydayHistory({
+    String mode = 'list',
+    String platform = 'ios',
+    String? historyName,
+    String? date,
+  }) async {
+    final queryParams = <String, dynamic>{
+      'mode': mode,
+      'platform': platform,
+    };
+    if (historyName != null) queryParams['history_name'] = historyName;
+    if (date != null) queryParams['date'] = date;
+    return client.post<Map<String, dynamic>>(
+      '/everyday/api/v1/get_history',
+      params: queryParams,
+      router: 'everydayrec.service.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> everydayStyleRecommend({
+    String platform = 'ios',
+    String tagids = '',
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/everydayrec.service/everyday_style_recommend',
+      body: {},
+      params: {'tagids': tagids},
+      encryptType: EncryptType.android,
+    );
+  }
 }

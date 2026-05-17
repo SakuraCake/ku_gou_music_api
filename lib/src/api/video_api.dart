@@ -84,4 +84,38 @@ class VideoApi extends BaseApi {
       fromJson: (json) => VideoUrlResult.fromJson(json),
     );
   }
+
+  Future<Map<String, dynamic>> audioMv({
+    required String albumAudioId,
+    String fields = '',
+  }) async {
+    final data = albumAudioId.split(',').map((s) => {'album_audio_id': s}).toList();
+    return client.post<Map<String, dynamic>>(
+      '/kmr/v1/audio/mv',
+      body: {
+        'data': data,
+        'fields': fields,
+      },
+      router: 'openapi.kugou.com',
+      headers: {'kg-tid': '38'},
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> audioDetail({
+    required String albumAudioId,
+    String fields = 'base',
+  }) async {
+    final data = albumAudioId.split(',').map((s) => {'entity_id': int.parse(s)}).toList();
+    return client.post<Map<String, dynamic>>(
+      '/kmr/v2/audio',
+      body: {
+        'data': data,
+        'fields': fields,
+      },
+      router: 'openapi.kugou.com',
+      headers: {'kg-tid': '238'},
+      encryptType: EncryptType.android,
+    );
+  }
 }

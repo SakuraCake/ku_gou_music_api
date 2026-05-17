@@ -2,7 +2,7 @@
 
 # kugou_api
 
-酷狗音乐 API 的 Dart 封装库，纯 Dart 实现，覆盖搜索、歌曲、歌单、专辑、歌手、评论、登录、FM 等全功能。
+酷狗音乐 API 的 Dart 封装库，覆盖搜索、歌曲、歌单、专辑、歌手、评论、登录、FM 等全功能。
 
 灵感来自 [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) Node.js 项目，将其核心功能移植为 Dart 原生包。
 
@@ -14,7 +14,7 @@
 
 ```yaml
 dependencies:
-  kugou_api: ^0.0.5
+  kugou_api: ^0.1.0
 ```
 
 或：
@@ -182,11 +182,13 @@ try {
 - [x] 搜索专辑 (`search.albums`)
 - [x] 搜索歌词 (`search.lyrics`)
 - [x] 综合搜索 (`search.mixed`)
+- [x] 混合搜索 v2 (`search.mixedSearch`)
 - [x] 热搜列表 (`search.hotDetail`)
+- [x] 热搜标签 (`search.hotTab`)
 - [x] 搜索建议 (`search.suggest`)
+- [x] 搜索建议 v2 (`search.suggestV2`)
 - [x] 默认搜索关键词 (`search.defaultWord`)
 - [x] 综合搜索 (`search.complex`)
-- [ ] 混合搜索 (`search_mixed`)
 - [ ] 歌词搜索 (`search_lyric`)
 
 ### 歌曲
@@ -194,8 +196,8 @@ try {
 - [x] 获取音乐 URL (`song.url`)
 - [x] 获取音乐详情 (`song.detail`)
 - [x] 歌曲排行 (`song.ranking`)
-- [ ] 歌曲高潮片段 (`song.climax`)
-- [ ] 歌曲排名筛选 (`song.rankingFilter`)
+- [x] 歌曲高潮片段 (`song.climax`)
+- [x] 歌曲排名筛选 (`song.rankingFilter`)
 - [ ] 获取音乐 URL（新版）(`song_url_new`)
 
 ### 歌词
@@ -209,21 +211,20 @@ try {
 - [x] 发送验证码 (`login.sendCaptcha`)
 - [x] 验证码登录 (`login.byCaptcha`)
 - [x] 二维码登录 (`login.qrCodeStream`)
-- [ ] 手机号登录 (`login_cellphone`)
-- [ ] 设备登录 (`login_device`)
-- [ ] 设备踢出 (`login_device_kick`)
-- [ ] 开放平台登录 (`login_openplat`)
+- [x] 设备登录 (`login.deviceLogin`)
+- [x] 设备踢出 (`login.deviceKick`)
+- [x] 开放平台登录 (`login.openplatLogin`)
 - [ ] Token 登录 (`login_token`)
-- [ ] 微信登录检查 (`login_wx_check`)
-- [ ] 微信登录创建 (`login_wx_create`)
+- [x] 微信登录创建 (`login.wxCreate`)
+- [x] 微信登录检查 (`login.wxCheck`)
 
 ### 排行榜
 
 - [x] 排行列表 (`rank.list`)
 - [x] 排行信息 (`rank.info`)
-- [ ] 排行音频 (`rank_audio`)
-- [ ] 排行榜顶部 (`rank_top`)
-- [ ] 排行榜往期 (`rank_vol`)
+- [x] 排行音频 (`rank.audio`)
+- [x] 排行榜顶部 (`rank.top`)
+- [x] 排行榜往期 (`rank.vol`)
 
 ### 歌单
 
@@ -236,16 +237,17 @@ try {
 - [x] 添加歌曲到歌单 (`playlist.addTracks`)
 - [x] 从歌单删除歌曲 (`playlist.removeTracks`)
 - [x] 删除歌单 (`playlist.delete`)
-- [ ] 歌单效果 (`playlist_effect`)
+- [x] 歌单效果 (`playlist.effect`)
 - [ ] 获取歌单所有歌曲 (`playlist_track_all`)
-- [ ] 获取歌单所有歌曲新版 (`playlist_track_all_new`)
+- [x] 获取歌单所有歌曲新版 (`playlist.trackAllNew`)
 
 ### 专辑
 
 - [x] 专辑详情 (`album.detail`)
+- [x] 专辑旧版详情 (`album.oldDetail`)
 - [x] 新碟上架 (`album.top`)
-- [ ] 专辑音乐列表 (`album_songs`)
-- [ ] 专辑商店 (`album_shop`)
+- [x] 专辑音乐列表 (`album.songs`)
+- [x] 专辑商店 (`album.shop`)
 
 ### 歌手
 
@@ -255,18 +257,18 @@ try {
 - [x] 获取歌手列表 (`artist.list`)
 - [x] 关注歌手 (`artist.follow`)
 - [x] 取消关注歌手 (`artist.unfollow`)
-- [ ] 获取歌手 MV (`artist_videos`)
-- [ ] 获取关注歌手新歌 (`artist_follow_newsongs`)
-- [ ] 获取歌手荣誉 (`artist_honour`)
+- [x] 获取歌手 MV (`artist.videos`)
+- [x] 获取关注歌手新歌 (`artist.followNewSongs`)
+- [x] 获取歌手荣誉 (`artist.honour`)
 
 ### 推荐
 
 - [x] 每日推荐 (`recommend.everyday`)
 - [x] AI 推荐 (`recommend.ai`)
 - [x] 新歌速递 (`recommend.newSongs`)
-- [ ] 每日推荐好友 (`everyday_friend`)
-- [ ] 历史推荐 (`everyday_history`)
-- [ ] 风格推荐 (`everyday_style_recommend`)
+- [x] 每日推荐好友 (`recommend.everydayFriend`)
+- [x] 历史推荐 (`recommend.everydayHistory`)
+- [x] 风格推荐 (`recommend.everydayStyleRecommend`)
 
 ### 评论
 
@@ -288,20 +290,20 @@ try {
 - [x] 关注歌手 (`user.follow`)
 - [x] 提交听歌历史 (`user.uploadHistory`)
 - [x] 听歌时长上报 (`user.listenTimeAdd`)
-- [ ] 用户关注消息 (`user_follow_message`)
-- [ ] 用户听歌排行 (`user_listen`)
-- [ ] 用户云盘 (`user_cloud`)
-- [ ] 用户云盘 URL (`user_cloud_url`)
-- [ ] 用户视频收藏 (`user_video_collect`)
-- [ ] 用户视频喜欢 (`user_video_love`)
+- [x] 用户关注消息 (`user.followMessage`)
+- [x] 用户听歌排行 (`user.listen`)
+- [x] 用户云盘 (`user.cloud`)
+- [x] 用户云盘 URL (`user.cloudUrl`)
+- [x] 用户视频收藏 (`user.videoCollect`)
+- [x] 用户视频喜欢 (`user.videoLove`)
 
 ### FM
 
 - [x] FM 分类 (`fm.classes`)
 - [x] FM 歌曲 (`fm.songs`)
 - [x] 私人 FM (`fm.personal`)
-- [ ] FM 推荐 (`fm_recommend`)
-- [ ] FM 图片 (`fm_image`)
+- [x] FM 推荐 (`fm.recommend`)
+- [x] FM 图片 (`fm.image`)
 
 ### IP 专区
 
@@ -344,13 +346,13 @@ try {
 - [x] 获取视频详情 (`video.detail`)
 - [x] 获取视频权限 (`video.privilege`)
 - [x] 获取视频 URL (`video.url`)
-- [ ] 获取歌曲 MV (`kmr_audio_mv`)
-- [ ] 获取音频 MV (`krm_audio`)
+- [x] 获取歌曲 MV (`video.audioMv`)
+- [x] 获取音频 MV 详情 (`video.audioDetail`)
 
 ### 场景
 
 - [x] 场景音乐列表 (`scene.lists`)
-- [ ] 场景音乐列表 V2 (`scene.listsV2`)
+- [x] 场景音乐列表 V2 (`scene.listsV2`)
 - [x] 获取场景音乐模块 (`scene.module`)
 - [x] 获取场景音乐模块信息 (`scene.moduleInfo`)
 - [x] 获取场景音乐列表 (`scene.audioList`)
@@ -380,29 +382,29 @@ try {
 - [x] 获取服务器时间 (`misc.serverNow`)
 - [x] 获取权限信息 (`misc.privilegeLite`)
 - [x] 刷一刷推荐 (`misc.brush`)
-- [ ] 注册设备 (`register_dev`)
+- [x] 注册设备 (`misc.registerDev`)
 - [ ] 验证码发送 (`captcha_sent`)
-- [ ] PC 电台 (`pc_diantai`)
+- [x] PC 电台 (`misc.pcDiantai`)
 - [ ] AI 推荐 (`ai_recommend`)
 
-### 青少年频道（未实现）
+### 青少年频道
 
-- [ ] 获取用户所有频道 (`youth_channel_all`)
-- [ ] 频道安利 (`youth_channel_amway`)
-- [ ] 频道详情 (`youth_channel_detail`)
-- [ ] 相似频道 (`youth_channel_similar`)
-- [ ] 频道订阅 (`youth_channel_sub`)
-- [ ] 频道音乐故事 (`youth_channel_song`)
-- [ ] 频道音乐故事详情 (`youth_channel_song_detail`)
-- [ ] 领取 VIP (`youth_day_vip`)
-- [ ] VIP 升级 (`youth_day_vip_upgrade`)
-- [ ] 动态 (`youth_dynamic`)
-- [ ] 动态最近 (`youth_dynamic_recent`)
-- [ ] 听歌 (`youth_listen_song`)
-- [ ] 月度 VIP 记录 (`youth_month_vip_record`)
-- [ ] 联合 VIP (`youth_union_vip`)
-- [ ] VIP (`youth_vip`)
-- [ ] 用户歌曲 (`youth_user_song`)
+- [x] 获取用户所有频道 (`youth.channelAll`)
+- [x] 频道安利 (`youth.channelAmway`)
+- [x] 频道详情 (`youth.channelDetail`)
+- [x] 相似频道 (`youth.channelSimilar`)
+- [x] 频道订阅 (`youth.channelSubscribe`)
+- [x] 频道音乐故事 (`youth.channelSong`)
+- [x] 频道音乐故事详情 (`youth.channelSongDetail`)
+- [x] 领取 VIP (`youth.dayVip`)
+- [x] VIP 升级 (`youth.dayVipUpgrade`)
+- [x] 动态 (`youth.dynamic$`)
+- [x] 动态最近 (`youth.dynamicRecent`)
+- [x] 听歌 (`youth.listenSong`)
+- [x] 月度 VIP 记录 (`youth.monthVipRecord`)
+- [x] 联合 VIP (`youth.unionVip`)
+- [x] VIP (`youth.vip`)
+- [x] 用户歌曲 (`youth.userSong`)
 
 ### 音频扩展（未实现）
 
@@ -412,31 +414,20 @@ try {
 
 ## 签名算法
 
-本库内置三种酷狗 API 签名算法：
+本库内置六种酷狗 API 签名/加密算法：
 
 - **Android 签名** — 默认算法，使用 Android 客户端盐值
 - **Web 签名** — Web 端算法，用于二维码登录等接口
 - **Register 签名** — 注册专用算法
+- **歌单 AES 加密/解密** — AES-CBC，6 位随机密钥，base64 输入输出
+- **RSA 加密 2** — RSA，PKCS1 v1.5 填充
+- **SHA1 哈希** — SHA1 哈希函数
 
 POST 请求签名会自动将请求体（JSON 编码）纳入签名计算。
-
-## 交互式示例
-
-项目提供了交互式示例，运行方式：
-
-```shell
-dart run example/kugou_api_example.dart
-```
-
-支持搜索歌曲、获取热搜关键词、获取歌曲播放 URL。
 
 ## 已知限制
 
 - 部分接口需要登录后才能使用（如 `IpApi.zoneHome`），可通过 `CookieJar` 传入初始 Cookie 或登录后自动获取
-- 以下接口因服务端问题暂未实现：
-  - `SongApi.climax` — CDN 服务器拒绝请求
-  - `SongApi.rankingFilter` — 参数错误
-  - `SceneApi.listsV2` — 服务端返回 HTML
 - CookieJar 不内置文件持久化，需用户自行保存 `serialize()` 的输出
 
 ## 免责声明

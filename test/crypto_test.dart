@@ -100,4 +100,95 @@ void main() {
       expect(decryptKrc([0x00, 0x00, 0x00, 0x00]), equals(''));
     });
   });
+
+  group('playlistAesEncrypt & playlistAesDecrypt', () {
+    test('encrypt and decrypt string round-trip', () {
+      const original = 'Hello, Playlist!';
+      final encrypted = playlistAesEncrypt(original);
+      final decrypted = playlistAesDecrypt(encrypted['str']!, encrypted['key']!);
+      expect(decrypted, equals(original));
+    });
+
+    test('encrypt and decrypt JSON round-trip', () {
+      final original = {'name': 'playlist', 'id': 42};
+      final encrypted = playlistAesEncrypt(original);
+      final decrypted = playlistAesDecrypt(encrypted['str']!, encrypted['key']!);
+      expect(decrypted, isA<Map>());
+      expect((decrypted as Map)['name'], equals('playlist'));
+      expect(decrypted['id'], equals(42));
+    });
+
+    test('encrypt returns map with key and str', () {
+      final encrypted = playlistAesEncrypt('test');
+      expect(encrypted, isA<Map<String, String>>());
+      expect(encrypted.containsKey('key'), isTrue);
+      expect(encrypted.containsKey('str'), isTrue);
+      expect(encrypted['key']!.length, equals(6));
+    });
+
+    test('encrypt str is base64 encoded', () {
+      final encrypted = playlistAesEncrypt('test data');
+      expect(RegExp(r'^[A-Za-z0-9+/]+=*$').hasMatch(encrypted['str']!), isTrue);
+    });
+
+    test('different calls produce different keys', () {
+      final encrypted1 = playlistAesEncrypt('test');
+      final encrypted2 = playlistAesEncrypt('test');
+      expect(encrypted1['key'], isNot(equals(encrypted2['key'])));
+    });
+  });
+
+  group('rsaEncrypt2', () {
+    test('produces non-empty hex string', () {
+      final result = rsaEncrypt2('test data');
+      expect(result, isA<String>());
+      expect(result.isNotEmpty, isTrue);
+      expect(RegExp(r'^[0-9a-f]+$').hasMatch(result), isTrue);
+    });
+
+    test('produces different output for different input', () {
+      final result1 = rsaEncrypt2('hello');
+      final result2 = rsaEncrypt2('world');
+      expect(result1, isNot(equals(result2)));
+    });
+
+    test('uses lite key when isLite is true', () {
+      final standardResult = rsaEncrypt2('test');
+      final liteResult = rsaEncrypt2('test', isLite: true);
+      expect(standardResult, isNot(equals(liteResult)));
+    });
+
+    test('accepts JSON-serializable data', () {
+      final result = rsaEncrypt2({'key': 'value'});
+      expect(result, isA<String>());
+      expect(result.isNotEmpty, isTrue);
+    });
+  });
+
+  group('cryptoSha1', () {
+    test('hashes empty string', () {
+      expect(cryptoSha1(''), equals('da39a3ee5e6b4b0d3255bfef95601890afd80709'));
+    });
+
+    test('hashes normal string', () {
+      expect(cryptoSha1('hello'), equals('aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d'));
+    });
+
+    test('produces 40-char hex string', () {
+      final result = cryptoSha1('test data');
+      expect(result.length, equals(40));
+      expect(RegExp(r'^[0-9a-f]{40}$').hasMatch(result), isTrue);
+    });
+
+    test('is deterministic', () {
+      expect(cryptoSha1('test'), equals(cryptoSha1('test')));
+    });
+
+    test('hashes JSON object', () {
+      final result = cryptoSha1({'key': 'value'});
+      expect(result, isA<String>());
+      expect(result.length, equals(40));
+      expect(RegExp(r'^[0-9a-f]{40}$').hasMatch(result), isTrue);
+    });
+  });
 }

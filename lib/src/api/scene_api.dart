@@ -47,14 +47,19 @@ class SceneApi extends BaseApi {
     required int sceneId,
     int page = 1,
     int pagesize = 30,
+    int? moduleId,
+    String? tag,
   }) async {
+    final params = <String, dynamic>{
+      'scene_id': sceneId,
+      'page': page,
+      'page_size': pagesize,
+    };
+    if (moduleId != null) params['module_id'] = moduleId;
+    if (tag != null) params['tag'] = tag;
     return client.post<SceneAudioListResult>(
       '/scene/v1/scene/audio_list',
-      params: {
-        'scene_id': sceneId,
-        'page': page,
-        'page_size': pagesize,
-      },
+      params: params,
       body: {
         'appid': client.httpClient.config.appid,
         'clientver': client.httpClient.config.clientver,
@@ -128,6 +133,28 @@ class SceneApi extends BaseApi {
       },
       encryptType: EncryptType.android,
       fromJson: (json) => SceneVideoListResult.fromJson(json),
+    );
+  }
+
+  static const _sortTypeMap = {'rec': 1, 'hot': 2, 'new': 3};
+
+  Future<Map<String, dynamic>> listsV2({
+    required int id,
+    int page = 1,
+    int pagesize = 30,
+    String sort = 'rec',
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/scene/v1/scene/list_v2',
+      params: {
+        'scene_id': id,
+        'page': page,
+        'pagesize': pagesize,
+        'sort_type': _sortTypeMap[sort] ?? 1,
+        'kugouid': client.httpClient.userid ?? 0,
+      },
+      body: {'exposure': []},
+      encryptType: EncryptType.android,
     );
   }
 }

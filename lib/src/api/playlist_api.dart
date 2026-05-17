@@ -283,6 +283,44 @@ class PlaylistApi extends BaseApi {
     );
   }
 
+  Future<Map<String, dynamic>> trackAllNew({
+    required String listId,
+    int page = 1,
+    int pagesize = 30,
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/v4/get_list_all_file',
+      body: {
+        'listid': listId,
+        'userid': client.httpClient.userid ?? 0,
+        'area_code': 1,
+        'show_relate_goods': 0,
+        'pagesize': pagesize,
+        'allplatform': 1,
+        'show_cover': 1,
+        'type': 0,
+        'token': client.httpClient.token ?? '',
+        'page': page,
+      },
+      router: 'cloudlist.service.kugou.com',
+      encryptType: EncryptType.android,
+    );
+  }
+
+  Future<Map<String, dynamic>> effect({
+    int page = 1,
+    int pagesize = 30,
+  }) async {
+    return client.post<Map<String, dynamic>>(
+      '/pubsongs/v1/get_sound_effect_list',
+      body: {
+        'page': page,
+        'pagesize': pagesize,
+      },
+      encryptType: EncryptType.android,
+    );
+  }
+
   PlaylistTrackResult _parseTrackResult(Map<String, dynamic> json) {
     final songsData = json['songs'];
     if (songsData is List) {
