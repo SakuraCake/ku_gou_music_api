@@ -1,5 +1,6 @@
 import '../client/base_api.dart';
 import '../client/http_client.dart';
+import '../config/constants.dart';
 import '../crypto/md5.dart';
 import '../crypto/signature.dart';
 import '../models/song.dart';
@@ -102,9 +103,7 @@ class SongApi extends BaseApi {
   Future<SongRankingResult> ranking({required int albumAudioId}) async {
     return client.get<SongRankingResult>(
       '/grow/v1/song_ranking/play_page/ranking_info',
-      params: {
-        'album_audio_id': albumAudioId,
-      },
+      params: {'album_audio_id': albumAudioId},
       encryptType: EncryptType.android,
       fromJson: (json) => SongRankingResult.fromJson(json),
     );
@@ -128,14 +127,14 @@ class SongApi extends BaseApi {
     final userid = client.httpClient.userid ?? 0;
     final dfid = client.httpClient.dfid;
     final clienttimeMs = DateTime.now().millisecondsSinceEpoch;
-    
+
     final key = cryptoMd5(
-      '$hash${'185672dd44712f60bb1736df5a377e82'}'
+      '$hash$kLiteSignKeySalt'
       '${client.httpClient.config.appid}'
       '${client.httpClient.mid}'
       '$userid',
     );
-    
+
     return client.post<SongPrivUrlResult>(
       '/v6/priv_url',
       baseURL: 'http://tracker.kugou.com',
@@ -185,7 +184,7 @@ class SongApi extends BaseApi {
     if (json is! Map<String, dynamic>) {
       return SongPrivUrlResult(songs: []);
     }
-    
+
     final songs = json['songs'] as List?;
     if (songs == null || songs.isEmpty) {
       return SongPrivUrlResult(
@@ -195,35 +194,36 @@ class SongApi extends BaseApi {
         songs: [],
       );
     }
-    
-    final parsedSongs = songs
-        .whereType<Map<String, dynamic>>()
-        .map((e) {
-          final qualities = e['qualities'] as List?;
-          final parsedQualities = qualities
-              ?.whereType<Map<String, dynamic>>()
-              .map((q) => AudioQualityItem(
-                    quality: q['quality'] as String?,
-                    bitrate: _parseInt(q['bitrate']),
-                    fileSize: _parseInt(q['file_size']),
-                    extName: q['ext_name'] as String?,
-                    url: q['url'] as String?,
-                    backupUrl: (q['backup_url'] as List?)?.whereType<String>().toList(),
-                    privStatus: _parseInt(q['priv_status']),
-                  ))
-              .toList();
-          
-          return SongPrivUrlItem(
-            hash: e['hash'] as String?,
-            audioName: e['audio_name'] as String?,
-            singerName: e['singer_name'] as String?,
-            albumName: e['album_name'] as String?,
-            timeLen: _parseInt(e['time_len']),
-            qualities: parsedQualities,
-          );
-        })
-        .toList();
-    
+
+    final parsedSongs = songs.whereType<Map<String, dynamic>>().map((e) {
+      final qualities = e['qualities'] as List?;
+      final parsedQualities = qualities
+          ?.whereType<Map<String, dynamic>>()
+          .map(
+            (q) => AudioQualityItem(
+              quality: q['quality'] as String?,
+              bitrate: _parseInt(q['bitrate']),
+              fileSize: _parseInt(q['file_size']),
+              extName: q['ext_name'] as String?,
+              url: q['url'] as String?,
+              backupUrl: (q['backup_url'] as List?)
+                  ?.whereType<String>()
+                  .toList(),
+              privStatus: _parseInt(q['priv_status']),
+            ),
+          )
+          .toList();
+
+      return SongPrivUrlItem(
+        hash: e['hash'] as String?,
+        audioName: e['audio_name'] as String?,
+        singerName: e['singer_name'] as String?,
+        albumName: e['album_name'] as String?,
+        timeLen: _parseInt(e['time_len']),
+        qualities: parsedQualities,
+      );
+    }).toList();
+
     return SongPrivUrlResult(
       status: json['status'] as int?,
       errorCode: json['error_code'] as int?,
@@ -231,7 +231,7 @@ class SongApi extends BaseApi {
       songs: parsedSongs,
     );
   }
-  
+
   int? _parseInt(dynamic value) {
     if (value == null) return null;
     if (value is int) return value;
