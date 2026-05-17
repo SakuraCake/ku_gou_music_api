@@ -1,3 +1,20 @@
+## 0.2.0
+
+### 文档改进
+
+- 移除 `lib/kugou_api.dart` 中的 TODO 注释，更新 API 数量说明（约 135 个方法）
+- 生成 dartdoc API 文档
+
+### 代码优化
+
+- 清理未使用的 import（youth_api.dart, api_method_test.dart）
+- 修复空的 catch 块警告
+
+### 示例脚本
+
+- 重写 `example/kugou_api_example.dart` 为全面的交互式示例脚本
+- 覆盖 13 个功能模块：登录、搜索、歌曲、歌单、专辑、歌手、评论、用户、推荐、排行榜、杂项、概念版、FM
+
 ## 0.1.0
 
 ### 新增 API 类

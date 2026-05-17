@@ -1,31 +1,5 @@
 import 'package:test/test.dart';
 import 'package:kugou_api/kugou_api.dart';
-import 'package:kugou_api/src/client/api_client.dart';
-import 'package:kugou_api/src/client/http_client.dart';
-import 'package:kugou_api/src/config.dart';
-import 'package:kugou_api/src/api/search_api.dart';
-import 'package:kugou_api/src/api/song_api.dart';
-import 'package:kugou_api/src/api/lyric_api.dart';
-import 'package:kugou_api/src/api/login_api.dart';
-import 'package:kugou_api/src/api/rank_api.dart';
-import 'package:kugou_api/src/api/playlist_api.dart';
-import 'package:kugou_api/src/api/album_api.dart';
-import 'package:kugou_api/src/api/artist_api.dart';
-import 'package:kugou_api/src/api/recommend_api.dart';
-import 'package:kugou_api/src/api/comment_api.dart';
-import 'package:kugou_api/src/api/user_api.dart';
-import 'package:kugou_api/src/api/fm_api.dart';
-import 'package:kugou_api/src/api/ip_api.dart';
-import 'package:kugou_api/src/api/top_api.dart';
-import 'package:kugou_api/src/api/images_api.dart';
-import 'package:kugou_api/src/api/yueku_api.dart';
-import 'package:kugou_api/src/api/longaudio_api.dart';
-import 'package:kugou_api/src/api/video_api.dart';
-import 'package:kugou_api/src/api/scene_api.dart';
-import 'package:kugou_api/src/api/sheet_api.dart';
-import 'package:kugou_api/src/api/theme_api.dart';
-import 'package:kugou_api/src/api/misc_api.dart';
-import 'package:kugou_api/src/api/youth_api.dart';
 
 class _FakeApiClient extends ApiClient {
   _FakeApiClient()
